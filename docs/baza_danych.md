@@ -1,4 +1,5 @@
 1. `recipes`:
+
 - `id` - pk
 - `name`
 - `imageResName`
@@ -14,6 +15,7 @@
 Rola: Główna encja przepisu
 
 2. `ingredients`:
+
 - `id` - pk
 - `recipeId` - fk → `recipes`
 - `name`
@@ -22,6 +24,7 @@ Rola: Główna encja przepisu
 Rola: Składniki (1:N do `recipes`)
 
 3. `steps`:
+
 - `id` - pk
 - `recipeId` - fk → `recipes`
 - `stepNumber`
@@ -32,6 +35,7 @@ Rola: Składniki (1:N do `recipes`)
 Rola: Kroki przygotowania (1:N)
 
 4. `favorites`:
+
 - `id` - pk
 - `recipeId` - fk unique → `recipes`
 - `addedAt`
@@ -39,6 +43,7 @@ Rola: Kroki przygotowania (1:N)
 Rola: Polubione (1:1 do `recipes`)
 
 5. `cooking_history`:
+
 - `id` - pk
 - `recipeId` - fk → `recipes`
 - `cookedAt`
