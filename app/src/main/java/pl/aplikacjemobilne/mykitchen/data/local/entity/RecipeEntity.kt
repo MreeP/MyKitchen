@@ -14,5 +14,5 @@ data class RecipeEntity(
     val authorName: String,
     val time: Int,
 
-    val imagePath: String,
+    val imageUri: String,
 )

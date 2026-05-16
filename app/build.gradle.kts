@@ -60,6 +60,10 @@ dependencies {
     implementation(libs.androidx.material3)
     ksp(libs.androidx.room.compiler)
 
+    // Coil
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
