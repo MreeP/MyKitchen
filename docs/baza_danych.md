@@ -12,8 +12,6 @@
 - `tags`
 - `isUserRecipe`
 
-Rola: Główna encja przepisu
-
 2. `ingredients`:
 
 - `id` - pk

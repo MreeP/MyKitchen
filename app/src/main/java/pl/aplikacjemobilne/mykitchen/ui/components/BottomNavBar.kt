@@ -17,37 +17,38 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hierarchy
 import pl.aplikacjemobilne.mykitchen.ui.navigation.Screen
-import pl.aplikacjemobilne.mykitchen.ui.theme.Primary
 
 data class BottomNavItem(
     val label: String,
-    val route: String,
+    val graphRoute: String,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector
 )
 
 val bottomNavItems = listOf(
-    BottomNavItem("Dom", Screen.Home.route, Icons.Filled.Home, Icons.Outlined.Home),
-    BottomNavItem("Szukaj", Screen.Search.route, Icons.Filled.Search, Icons.Outlined.Search),
-    BottomNavItem("Ulubione", Screen.Favorites.route, Icons.Filled.Favorite, Icons.Outlined.FavoriteBorder),
-    BottomNavItem("Profil", Screen.Profile.route, Icons.Filled.Person, Icons.Outlined.Person),
+    BottomNavItem("Dom", Screen.HomeGraph.route, Icons.Filled.Home, Icons.Outlined.Home),
+    BottomNavItem("Szukaj", Screen.SearchGraph.route, Icons.Filled.Search, Icons.Outlined.Search),
+    BottomNavItem("Ulubione", Screen.FavoritesGraph.route, Icons.Filled.Favorite, Icons.Outlined.FavoriteBorder),
+    BottomNavItem("Profil", Screen.ProfileGraph.route, Icons.Filled.Person, Icons.Outlined.Person),
 )
 
 @Composable
 fun BottomNavBar(
-    currentRoute: String?,
+    currentDestination: NavDestination?,
     onNavigate: (String) -> Unit
 ) {
     NavigationBar(
         containerColor = Color.White
     ) {
         bottomNavItems.forEach { item ->
-            val selected = currentRoute == item.route
+            val selected = currentDestination?.hierarchy?.any { it.route == item.graphRoute } == true
 
             NavigationBarItem(
                 selected = selected,
-                onClick = { onNavigate(item.route) },
+                onClick = { onNavigate(item.graphRoute) },
                 icon = {
                     Icon(
                         imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
@@ -56,8 +57,8 @@ fun BottomNavBar(
                 },
                 label = { Text(item.label) },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = Primary,
-                    selectedTextColor = Primary,
+                    selectedIconColor = Color(0xFFD4540A),
+                    selectedTextColor = Color(0xFFD4540A),
                     indicatorColor = Color.Transparent
                 )
             )
