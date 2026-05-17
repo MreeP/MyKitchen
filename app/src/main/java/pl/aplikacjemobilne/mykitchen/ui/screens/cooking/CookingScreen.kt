@@ -216,17 +216,38 @@ fun CookingScreen(
 
                     Spacer(Modifier.height(8.dp))
 
-                    Text(
-                        text = currentStep.description,
-                        fontSize = 16.sp,
-                        color = Color(0xFFF5F0EB),
-                        lineHeight = 24.sp,
+                    ExpandableStepText(
+                        description = currentStep.description,
+                        ingredients = uiState.allIngredients,
                     )
+
+                    if (uiState.currentStepIngredients.isNotEmpty()) {
+                        Spacer(Modifier.height(16.dp))
+
+                        Text(
+                            text = "SKŁADNIKI DO TEGO KROKU",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF9A9A9A),
+                            letterSpacing = 1.sp,
+                        )
+
+                        Spacer(Modifier.height(6.dp))
+
+                        uiState.currentStepIngredients.forEach { ingredient ->
+                            Text(
+                                text = "• ${ingredient.unit.format(ingredient.amount)} ${ingredient.name}",
+                                fontSize = 14.sp,
+                                color = Color(0xFFCCCCCC),
+                            )
+                        }
+                    }
                 }
             }
 
             if (currentStep.timerSeconds != null && currentStep.timerSeconds > 0) {
                 Spacer(Modifier.height(16.dp))
+
                 TimerCard(
                     seconds = uiState.timerSeconds,
                     isRunning = uiState.timerRunning,

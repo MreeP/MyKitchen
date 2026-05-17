@@ -13,11 +13,14 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import pl.aplikacjemobilne.mykitchen.MyKitchenApp
+import pl.aplikacjemobilne.mykitchen.data.local.entity.IngredientEntity
 import pl.aplikacjemobilne.mykitchen.data.local.entity.StepEntity
 
 data class CookingUiState(
     val recipeName: String = "",
     val steps: List<StepEntity> = emptyList(),
+    val allIngredients: List<IngredientEntity> = emptyList(),
+    val currentStepIngredients: List<IngredientEntity> = emptyList(),
     val currentStepIndex: Int = 0,
     val timerSeconds: Int = 0,
     val timerRunning: Boolean = false,
@@ -48,19 +51,29 @@ class CookingViewModel(application: Application) : AndroidViewModel(application)
                     _uiState.value = _uiState.value.copy(
                         recipeName = details.recipe.name,
                         steps = steps,
+                        allIngredients = details.ingredients,
                     )
-                    loadTimerForStep(0, steps)
+                    loadTimerForStep(0, steps, details.ingredients)
                 }
             }
         }
     }
 
-    private fun loadTimerForStep(index: Int, steps: List<StepEntity> = _uiState.value.steps) {
+    private fun loadTimerForStep(
+        index: Int,
+        steps: List<StepEntity> = _uiState.value.steps,
+        allIngredients: List<IngredientEntity> = _uiState.value.allIngredients,
+    ) {
         timerJob?.cancel()
         val step = steps.getOrNull(index)
         val timerSec = step?.timerSeconds ?: 0
+        val stepIngredients = if (step != null) {
+            allIngredients.filter { it.stepNumber == step.stepNumber }
+        } else emptyList()
+
         _uiState.value = _uiState.value.copy(
             currentStepIndex = index,
+            currentStepIngredients = stepIngredients,
             timerSeconds = timerSec,
             timerRunning = false,
             timerInitialSeconds = timerSec,

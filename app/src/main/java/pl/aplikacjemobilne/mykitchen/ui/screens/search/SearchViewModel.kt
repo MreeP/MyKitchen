@@ -56,6 +56,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
 
     fun toggleFavorite(recipeId: Long) {
         val isFav = uiState.value.favoriteIds.contains(recipeId)
+
         viewModelScope.launch {
             repository.toggleFavorite(recipeId, isFav)
         }

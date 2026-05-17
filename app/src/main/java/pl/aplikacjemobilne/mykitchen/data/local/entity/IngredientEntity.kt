@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import pl.aplikacjemobilne.mykitchen.data.model.IngredientUnit
 
 @Entity(
     tableName = "ingredients",
@@ -16,7 +17,8 @@ import androidx.room.PrimaryKey
         )
     ],
     indices = [
-        Index("recipeId")
+        Index("recipeId"),
+        Index("stepNumber"),
     ],
 )
 data class IngredientEntity(
@@ -25,5 +27,6 @@ data class IngredientEntity(
     val recipeId: Long,
     val name: String,
     val amount: String,
-    val unit: String,
+    val unit: IngredientUnit,
+    val stepNumber: Int? = null,
 )

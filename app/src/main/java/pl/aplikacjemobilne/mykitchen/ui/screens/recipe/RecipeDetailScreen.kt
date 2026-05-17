@@ -255,11 +255,9 @@ private fun IngredientRow(ingredient: IngredientEntity) {
                 color = Color(0xFF1A1A1A),
             )
         }
-        val amountText = if (ingredient.amount.isNotEmpty()) {
-            "${ingredient.amount}${ingredient.unit}"
-        } else {
-            ingredient.unit
-        }
+
+        val amountText = ingredient.unit.format(ingredient.amount)
+
         Text(
             text = amountText,
             fontSize = 14.sp,

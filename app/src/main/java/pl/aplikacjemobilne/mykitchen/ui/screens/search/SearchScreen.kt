@@ -101,7 +101,7 @@ fun SearchScreen(
         )
 
         if (uiState.query.isBlank()) {
-            RecommendedContent(uiState, onNavigateToRecipe)
+            RecommendedContent(uiState, onNavigateToRecipe, viewModel::toggleFavorite)
         } else {
             SearchResultsContent(uiState, onNavigateToRecipe, viewModel::toggleFavorite)
         }
@@ -112,19 +112,20 @@ fun SearchScreen(
 private fun RecommendedContent(
     uiState: SearchUiState,
     onNavigateToRecipe: (Long) -> Unit,
+    onToggleFavorite: (Long) -> Unit,
 ) {
-    Column(modifier = Modifier.padding(top = 24.dp)) {
-        NamedSection(title = "Polecane dzisiaj", textModifier = Modifier.padding(start = 20.dp)) {
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(horizontal = 20.dp),
-            ) {
-                items(uiState.recipes, key = { it.id }) { recipe ->
-                    RecipeCard(
-                        recipe = recipe,
-                        onClick = { onNavigateToRecipe(recipe.id) },
-                    )
-                }
+    NamedSection(title = "Polecane dzisiaj", textModifier = Modifier.padding(start = 20.dp).padding(top = 20.dp)) {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
+        ) {
+            items(uiState.recipes, key = { it.id }) { recipe ->
+                RecipeListCard(
+                    recipe = recipe,
+                    isFavorite = uiState.favoriteIds.contains(recipe.id),
+                    onClick = { onNavigateToRecipe(recipe.id) },
+                    onFavoriteClick = { onToggleFavorite(recipe.id) },
+                )
             }
         }
     }
