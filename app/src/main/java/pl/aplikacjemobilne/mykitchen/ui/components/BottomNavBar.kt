@@ -13,7 +13,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -39,7 +38,6 @@ val bottomNavItems = listOf(
 fun BottomNavBar(
     currentDestination: NavDestination?,
     onNavigate: (String) -> Unit,
-    showLabels: Boolean = false,
 ) {
     NavigationBar(
         containerColor = Color.White
@@ -56,11 +54,8 @@ fun BottomNavBar(
                         contentDescription = item.label
                     )
                 },
-                label = {
-                    if (showLabels) {
-                        Text(item.label)
-                    }
-                },
+                label = null,
+                alwaysShowLabel = false,
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = Color(0xFFD4540A),
                     selectedTextColor = Color(0xFFD4540A),

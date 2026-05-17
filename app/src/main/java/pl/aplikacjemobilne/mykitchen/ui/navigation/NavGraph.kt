@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import pl.aplikacjemobilne.mykitchen.ui.screens.category.CategoryScreen
+import pl.aplikacjemobilne.mykitchen.ui.screens.cooking.CookingScreen
 import pl.aplikacjemobilne.mykitchen.ui.screens.favorites.FavoritesScreen
 import pl.aplikacjemobilne.mykitchen.ui.screens.home.HomeScreen
 import pl.aplikacjemobilne.mykitchen.ui.screens.profile.ProfileScreen
@@ -53,6 +54,7 @@ fun NavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
                 ),
             ) { backStackEntry ->
                 val name = backStackEntry.arguments?.getString(Screen.ARG_NAME).orEmpty()
+
                 CategoryScreen(
                     categoryName = name,
                     onNavigateBack = {
@@ -70,9 +72,26 @@ fun NavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
                 ),
             ) { backStackEntry ->
                 val recipeId = backStackEntry.arguments?.getLong(Screen.ARG_RECIPE_ID) ?: 0L
+
                 RecipeDetailScreen(
                     recipeId = recipeId,
                     onNavigateBack = { navController.popBackStack() },
+                    onStartCooking = { id ->
+                        navController.navigate(Screen.Cooking.routeFor(id))
+                    },
+                )
+            }
+            composable(
+                route = Screen.Cooking.route,
+                arguments = listOf(
+                    navArgument(Screen.ARG_RECIPE_ID) { type = NavType.LongType },
+                ),
+            ) { backStackEntry ->
+                val recipeId = backStackEntry.arguments?.getLong(Screen.ARG_RECIPE_ID) ?: 0L
+
+                CookingScreen(
+                    recipeId = recipeId,
+                    onFinish = { navController.popBackStack() },
                 )
             }
         }
@@ -80,7 +99,42 @@ fun NavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
             route = Screen.SearchGraph.route,
             startDestination = Screen.Search.route,
         ) {
-            composable(Screen.Search.route) { SearchScreen() }
+            composable(Screen.Search.route) {
+                SearchScreen(
+                    onNavigateToRecipe = { recipeId ->
+                        navController.navigate(Screen.RecipeDetail.routeFor(recipeId))
+                    },
+                )
+            }
+            composable(
+                route = Screen.RecipeDetail.route,
+                arguments = listOf(
+                    navArgument(Screen.ARG_RECIPE_ID) { type = NavType.LongType },
+                ),
+            ) { backStackEntry ->
+                val recipeId = backStackEntry.arguments?.getLong(Screen.ARG_RECIPE_ID) ?: 0L
+
+                RecipeDetailScreen(
+                    recipeId = recipeId,
+                    onNavigateBack = { navController.popBackStack() },
+                    onStartCooking = { id ->
+                        navController.navigate(Screen.Cooking.routeFor(id))
+                    },
+                )
+            }
+            composable(
+                route = Screen.Cooking.route,
+                arguments = listOf(
+                    navArgument(Screen.ARG_RECIPE_ID) { type = NavType.LongType },
+                ),
+            ) { backStackEntry ->
+                val recipeId = backStackEntry.arguments?.getLong(Screen.ARG_RECIPE_ID) ?: 0L
+
+                CookingScreen(
+                    recipeId = recipeId,
+                    onFinish = { navController.popBackStack() },
+                )
+            }
         }
         navigation(
             route = Screen.FavoritesGraph.route,
@@ -103,9 +157,23 @@ fun NavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
 
                 RecipeDetailScreen(
                     recipeId = recipeId,
-                    onNavigateBack = {
-                        navController.popBackStack()
+                    onNavigateBack = { navController.popBackStack() },
+                    onStartCooking = { id ->
+                        navController.navigate(Screen.Cooking.routeFor(id))
                     },
+                )
+            }
+            composable(
+                route = Screen.Cooking.route,
+                arguments = listOf(
+                    navArgument(Screen.ARG_RECIPE_ID) { type = NavType.LongType },
+                ),
+            ) { backStackEntry ->
+                val recipeId = backStackEntry.arguments?.getLong(Screen.ARG_RECIPE_ID) ?: 0L
+
+                CookingScreen(
+                    recipeId = recipeId,
+                    onFinish = { navController.popBackStack() },
                 )
             }
         }
@@ -113,7 +181,42 @@ fun NavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
             route = Screen.ProfileGraph.route,
             startDestination = Screen.Profile.route,
         ) {
-            composable(Screen.Profile.route) { ProfileScreen() }
+            composable(Screen.Profile.route) {
+                ProfileScreen(
+                    onNavigateToRecipe = { recipeId ->
+                        navController.navigate(Screen.RecipeDetail.routeFor(recipeId))
+                    },
+                )
+            }
+            composable(
+                route = Screen.RecipeDetail.route,
+                arguments = listOf(
+                    navArgument(Screen.ARG_RECIPE_ID) { type = NavType.LongType },
+                ),
+            ) { backStackEntry ->
+                val recipeId = backStackEntry.arguments?.getLong(Screen.ARG_RECIPE_ID) ?: 0L
+
+                RecipeDetailScreen(
+                    recipeId = recipeId,
+                    onNavigateBack = { navController.popBackStack() },
+                    onStartCooking = { id ->
+                        navController.navigate(Screen.Cooking.routeFor(id))
+                    },
+                )
+            }
+            composable(
+                route = Screen.Cooking.route,
+                arguments = listOf(
+                    navArgument(Screen.ARG_RECIPE_ID) { type = NavType.LongType },
+                ),
+            ) { backStackEntry ->
+                val recipeId = backStackEntry.arguments?.getLong(Screen.ARG_RECIPE_ID) ?: 0L
+
+                CookingScreen(
+                    recipeId = recipeId,
+                    onFinish = { navController.popBackStack() },
+                )
+            }
         }
     }
 }

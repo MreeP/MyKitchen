@@ -16,6 +16,7 @@ class MyKitchenApp : Application() {
             ingredientDao = database.ingredientDao(),
             stepDao = database.stepDao(),
             favoriteDao = database.favoriteDao(),
+            cookingHistoryDao = database.cookingHistoryDao(),
         )
     }
 }

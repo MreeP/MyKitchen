@@ -16,6 +16,10 @@ open class Screen(val route: String) {
         fun routeFor(recipeId: Long): String = "recipe/$recipeId"
     }
 
+    data object Cooking : Screen(route = "cooking/{$ARG_RECIPE_ID}") {
+        fun routeFor(recipeId: Long): String = "cooking/$recipeId"
+    }
+
     data object HomeGraph : Screen(route = "home_graph")
     data object SearchGraph : Screen(route = "search_graph")
     data object FavoritesGraph : Screen(route = "favorites_graph")

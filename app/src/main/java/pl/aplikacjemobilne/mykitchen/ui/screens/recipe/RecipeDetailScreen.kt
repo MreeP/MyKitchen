@@ -50,6 +50,7 @@ import pl.aplikacjemobilne.mykitchen.data.local.entity.IngredientEntity
 fun RecipeDetailScreen(
     recipeId: Long,
     onNavigateBack: () -> Unit,
+    onStartCooking: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: RecipeDetailViewModel = viewModel(),
 ) {
@@ -70,51 +71,53 @@ fun RecipeDetailScreen(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(300.dp)
-                .background(Color(0xFF2D5016))
-                .windowInsetsPadding(WindowInsets.statusBars),
+                .background(Color(0xFF2D5016)),
         ) {
             if (recipe != null) {
                 AsyncImage(
                     model = recipe.imageUri,
                     contentDescription = recipe.name,
-                    contentScale = ContentScale.Fit,
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .size(180.dp)
-                        .align(Alignment.Center),
+                        .fillMaxWidth()
+                        .height(300.dp),
                 )
+            } else {
+                Spacer(Modifier.height(300.dp))
             }
 
-            Surface(
-                onClick = onNavigateBack,
-                shape = CircleShape,
-                color = Color(0xFF3D6B1E),
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
-                    .padding(16.dp)
-                    .align(Alignment.TopStart),
+                    .fillMaxWidth()
+                    .windowInsetsPadding(WindowInsets.statusBars)
+                    .padding(16.dp),
             ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Wróć",
-                    tint = Color.White,
-                    modifier = Modifier.padding(8.dp),
-                )
-            }
+                Surface(
+                    onClick = onNavigateBack,
+                    shape = CircleShape,
+                    color = Color(0x55000000),
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Wróć",
+                        tint = Color.White,
+                        modifier = Modifier.padding(8.dp),
+                    )
+                }
 
-            Surface(
-                onClick = { viewModel.toggleFavorite() },
-                shape = CircleShape,
-                color = Color(0xFF3D6B1E),
-                modifier = Modifier
-                    .padding(16.dp)
-                    .align(Alignment.TopEnd),
-            ) {
-                Icon(
-                    imageVector = if (uiState.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                    contentDescription = if (uiState.isFavorite) "Usuń z ulubionych" else "Dodaj do ulubionych",
-                    tint = if (uiState.isFavorite) Color(0xFFE53935) else Color.White,
-                    modifier = Modifier.padding(8.dp),
-                )
+                Surface(
+                    onClick = { viewModel.toggleFavorite() },
+                    shape = CircleShape,
+                    color = Color(0x55000000),
+                ) {
+                    Icon(
+                        imageVector = if (uiState.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                        contentDescription = if (uiState.isFavorite) "Usuń z ulubionych" else "Dodaj do ulubionych",
+                        tint = if (uiState.isFavorite) Color(0xFFE53935) else Color.White,
+                        modifier = Modifier.padding(8.dp),
+                    )
+                }
             }
         }
 
@@ -181,7 +184,7 @@ fun RecipeDetailScreen(
             Spacer(Modifier.height(24.dp))
 
             Button(
-                onClick = { },
+                onClick = { onStartCooking(recipeId) },
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFFD4540A),

@@ -3,14 +3,18 @@ package pl.aplikacjemobilne.mykitchen
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -43,9 +47,33 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
+                val isCookingScreen = currentDestination?.route == "cooking/{recipeId}"
+                val activity = LocalContext.current as ComponentActivity
+
+                LaunchedEffect(isCookingScreen) {
+                    if (isCookingScreen) {
+                        activity.enableEdgeToEdge(
+                            navigationBarStyle = SystemBarStyle.dark(
+                                android.graphics.Color.TRANSPARENT
+                            )
+                        )
+                    } else {
+                        activity.enableEdgeToEdge()
+                    }
+                }
+
                 Scaffold(
                     contentWindowInsets = WindowInsets(0),
+                    containerColor = if (isCookingScreen) {
+                        Color(0xFF1A1200)
+                    } else {
+                        Color.Unspecified
+                    },
                     bottomBar = {
+                        if (isCookingScreen) {
+                            return@Scaffold
+                        }
+
                         BottomNavBar(
                             currentDestination = currentDestination,
                             onNavigate = { graphRoute ->

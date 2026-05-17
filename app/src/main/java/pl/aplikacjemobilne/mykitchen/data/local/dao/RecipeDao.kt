@@ -24,6 +24,12 @@ interface RecipeDao {
     @Query("SELECT * FROM recipes WHERE id = :id")
     fun getWithDetailsById(id: Long): Flow<RecipeWithDetails?>
 
+    @Query("SELECT * FROM recipes WHERE name LIKE '%' || :query || '%'")
+    fun searchByName(query: String): Flow<List<RecipeEntity>>
+
+    @Query("SELECT * FROM recipes WHERE authorName = :authorName")
+    fun getByAuthorName(authorName: String): Flow<List<RecipeEntity>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(recipes: List<RecipeEntity>)
 
