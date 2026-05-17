@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,6 +22,7 @@ import pl.aplikacjemobilne.mykitchen.data.local.entity.FavoriteEntity
 import pl.aplikacjemobilne.mykitchen.data.local.entity.IngredientEntity
 import pl.aplikacjemobilne.mykitchen.data.local.entity.RecipeEntity
 import pl.aplikacjemobilne.mykitchen.data.local.entity.StepEntity
+import pl.aplikacjemobilne.mykitchen.data.model.IngredientUnit
 
 @Database(
     entities = [
@@ -31,9 +33,10 @@ import pl.aplikacjemobilne.mykitchen.data.local.entity.StepEntity
         FavoriteEntity::class,
         CookingHistoryEntity::class,
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
+@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun categoryDao(): CategoryDao
     abstract fun recipeDao(): RecipeDao
@@ -102,238 +105,301 @@ private val seedCategories = listOf(
 )
 
 private val seedRecipes = listOf(
+    // Rozkoszny.pl
     RecipeEntity(
         id = 1,
-        name = "Spaghetti Carbonara",
-        servings = 4,
+        name = "Makaron Primavera z jogurtem greckim",
+        servings = 2,
         rating = 4.7f,
-        authorName = "Anna Kowalska",
-        time = 25,
-        imageUri = resUri(R.drawable.img_spaghetti_carbonara),
+        authorName = "Rozkoszny.pl",
+        time = 15,
+        imageUri = resUri(R.drawable.img_makaron_primavera),
         categoryId = 1,
     ),
     RecipeEntity(
-        id = 2,
-        name = "Żurek",
-        servings = 6,
-        rating = 4.8f,
-        authorName = "Jan Nowak",
-        time = 60,
-        imageUri = resUri(R.drawable.img_zurek),
-        categoryId = 3,
-    ),
-    RecipeEntity(
-        id = 3,
-        name = "Pierogi Ruskie",
-        servings = 4,
-        rating = 4.9f,
-        authorName = "Tadeusz Pierogowicz",
-        time = 90,
-        imageUri = resUri(R.drawable.img_pierogi_ruskie),
-        categoryId = 5,
-    ),
-    RecipeEntity(
         id = 4,
-        name = "Bigos",
-        servings = 8,
-        rating = 4.5f,
-        authorName = "Tadeusz Pierogowicz",
-        time = 120,
-        imageUri = resUri(R.drawable.img_bigos),
-        categoryId = 5,
+        name = "Cytrusowe boczniaki ze szparagami i chili",
+        servings = 2,
+        rating = 4.7f,
+        authorName = "Rozkoszny.pl",
+        time = 15,
+        imageUri = resUri(R.drawable.img_boczniaki_cytrusowe),
+        categoryId = 2,
     ),
     RecipeEntity(
         id = 5,
-        name = "Schabowy z ziemniakami",
-        servings = 2,
-        rating = 4.6f,
-        authorName = "Katarzyna Lewandowska",
-        time = 40,
-        imageUri = resUri(R.drawable.img_schabowy),
-        categoryId = 5,
-    ),
-    RecipeEntity(
-        id = 6,
-        name = "Rosół",
-        servings = 6,
-        rating = 4.7f,
-        authorName = "Tomasz Wójcik",
-        time = 180,
-        imageUri = resUri(R.drawable.img_rosol),
+        name = "Bardzo zielona zupa z cheddarowym krakersem",
+        servings = 4,
+        rating = 4.8f,
+        authorName = "Rozkoszny.pl",
+        time = 35,
+        imageUri = resUri(R.drawable.img_zielona_zupa),
         categoryId = 3,
     ),
     RecipeEntity(
-        id = 7,
-        name = "Sernik",
-        servings = 12,
-        rating = 4.8f,
-        authorName = "Tadeusz Pierogowicz",
-        time = 75,
-        imageUri = resUri(R.drawable.img_sernik),
-        categoryId = 4,
+        id = 6,
+        name = "Tom yum na skróty",
+        servings = 4,
+        rating = 4.6f,
+        authorName = "Rozkoszny.pl",
+        time = 35,
+        imageUri = resUri(R.drawable.img_tom_yum),
+        categoryId = 3,
     ),
     RecipeEntity(
         id = 8,
-        name = "Gołąbki",
+        name = "Sernik baskijski",
+        servings = 12,
+        rating = 4.9f,
+        authorName = "Rozkoszny.pl",
+        time = 60,
+        imageUri = resUri(R.drawable.img_sernik_baskijski),
+        categoryId = 4,
+    ),
+    // AniaGotuje.pl
+    RecipeEntity(
+        id = 2,
+        name = "Makaron ze szparagami",
         servings = 4,
-        rating = 4.4f,
-        authorName = "Michał Szymański",
-        time = 90,
-        imageUri = resUri(R.drawable.img_golabki),
-        categoryId = 5,
+        rating = 4.6f,
+        authorName = "AniaGotuje.pl",
+        time = 40,
+        imageUri = resUri(R.drawable.img_makaron_szparagi),
+        categoryId = 1,
+    ),
+    RecipeEntity(
+        id = 3,
+        name = "Sałatka Gyros",
+        servings = 4,
+        rating = 4.5f,
+        authorName = "AniaGotuje.pl",
+        time = 45,
+        imageUri = resUri(R.drawable.img_salatka_gyros),
+        categoryId = 2,
+    ),
+    RecipeEntity(
+        id = 7,
+        name = "Barszcz ukraiński z botwinką",
+        servings = 6,
+        rating = 4.7f,
+        authorName = "AniaGotuje.pl",
+        time = 120,
+        imageUri = resUri(R.drawable.img_barszcz_ukrainski),
+        categoryId = 3,
     ),
     RecipeEntity(
         id = 9,
-        name = "Placki ziemniaczane",
-        servings = 3,
-        rating = 4.5f,
-        authorName = "Tadeusz Pierogowicz",
-        time = 30,
-        imageUri = resUri(R.drawable.img_placki_ziemniaczane),
-        categoryId = 5,
+        name = "Szarlotka",
+        servings = 8,
+        rating = 4.8f,
+        authorName = "AniaGotuje.pl",
+        time = 100,
+        imageUri = resUri(R.drawable.img_szarlotka),
+        categoryId = 4,
     ),
     RecipeEntity(
         id = 10,
-        name = "Kotlet mielony",
+        name = "Racuchy z jabłkami",
         servings = 4,
-        rating = 4.3f,
-        authorName = "Paweł Kozłowski",
-        time = 35,
-        imageUri = resUri(R.drawable.img_kotlet_mielony),
+        rating = 4.5f,
+        authorName = "AniaGotuje.pl",
+        time = 30,
+        imageUri = resUri(R.drawable.img_racuchy_jablka),
+        categoryId = 4,
+    ),
+    RecipeEntity(
+        id = 11,
+        name = "Fasolka po bretońsku",
+        servings = 10,
+        rating = 4.6f,
+        authorName = "AniaGotuje.pl",
+        time = 150,
+        imageUri = resUri(R.drawable.img_fasolka_bretonska),
         categoryId = 5,
     ),
 )
 
 private val seedIngredients = listOf(
-    // Spaghetti Carbonara (1)
-    IngredientEntity(recipeId = 1, name = "Spaghetti", amount = "200", unit = "g"),
-    IngredientEntity(recipeId = 1, name = "Boczek pancetta", amount = "100", unit = "g"),
-    IngredientEntity(recipeId = 1, name = "Żółka jaj", amount = "3", unit = "szt."),
-    IngredientEntity(recipeId = 1, name = "Parmezan starty", amount = "80", unit = "g"),
-    IngredientEntity(recipeId = 1, name = "Czarny pieprz", amount = "", unit = "do smaku"),
+    // Makaron Primavera z jogurtem greckim (1) – Rozkoszny.pl
+    IngredientEntity(recipeId = 1, name = "Spaghetti", amount = "200", unit = IngredientUnit.GRAM, stepNumber = 1),
+    IngredientEntity(recipeId = 1, name = "Szparagi zielone", amount = "250", unit = IngredientUnit.GRAM, stepNumber = 2),
+    IngredientEntity(recipeId = 1, name = "Masło", amount = "2", unit = IngredientUnit.TABLESPOON, stepNumber = 3),
+    IngredientEntity(recipeId = 1, name = "Dymka", amount = "2", unit = IngredientUnit.PIECE, stepNumber = 3),
+    IngredientEntity(recipeId = 1, name = "Groszek cukrowy", amount = "125", unit = IngredientUnit.GRAM, stepNumber = 3),
+    IngredientEntity(recipeId = 1, name = "Czosnek", amount = "4", unit = IngredientUnit.CLOVES, stepNumber = 4),
+    IngredientEntity(recipeId = 1, name = "Jogurt grecki", amount = "250", unit = IngredientUnit.GRAM, stepNumber = 4),
+    IngredientEntity(recipeId = 1, name = "Parmezan", amount = "60", unit = IngredientUnit.GRAM, stepNumber = 4),
+    IngredientEntity(recipeId = 1, name = "Skórka z cytryny", amount = "1", unit = IngredientUnit.TABLESPOON, stepNumber = 4),
 
-    // Żurek (2)
-    IngredientEntity(recipeId = 2, name = "Zakwas żurowy", amount = "500", unit = "ml"),
-    IngredientEntity(recipeId = 2, name = "Biała kiełbasa", amount = "300", unit = "g"),
-    IngredientEntity(recipeId = 2, name = "Jajka", amount = "4", unit = "szt."),
-    IngredientEntity(recipeId = 2, name = "Bulion", amount = "1", unit = "l"),
-    IngredientEntity(recipeId = 2, name = "Majeranek", amount = "1", unit = "łyżeczka"),
+    // Makaron ze szparagami (2) – AniaGotuje.pl
+    IngredientEntity(recipeId = 2, name = "Makaron pappardelle", amount = "250", unit = IngredientUnit.GRAM, stepNumber = 1),
+    IngredientEntity(recipeId = 2, name = "Szparagi zielone", amount = "350", unit = IngredientUnit.GRAM, stepNumber = 2),
+    IngredientEntity(recipeId = 2, name = "Boczek wędzony", amount = "150", unit = IngredientUnit.GRAM, stepNumber = 3),
+    IngredientEntity(recipeId = 2, name = "Czosnek", amount = "1", unit = IngredientUnit.CLOVES, stepNumber = 4),
+    IngredientEntity(recipeId = 2, name = "Śmietanka 30%", amount = "5", unit = IngredientUnit.TABLESPOON, stepNumber = 4),
+    IngredientEntity(recipeId = 2, name = "Parmezan", amount = "20", unit = IngredientUnit.GRAM, stepNumber = 4),
 
-    // Pierogi Ruskie (3)
-    IngredientEntity(recipeId = 3, name = "Mąka pszenna", amount = "500", unit = "g"),
-    IngredientEntity(recipeId = 3, name = "Ziemniaki", amount = "500", unit = "g"),
-    IngredientEntity(recipeId = 3, name = "Twaróg", amount = "250", unit = "g"),
-    IngredientEntity(recipeId = 3, name = "Cebula", amount = "2", unit = "szt."),
-    IngredientEntity(recipeId = 3, name = "Masło", amount = "30", unit = "g"),
+    // Sałatka Gyros (3) – AniaGotuje.pl
+    IngredientEntity(recipeId = 3, name = "Pierś z kurczaka", amount = "800", unit = IngredientUnit.GRAM, stepNumber = 1),
+    IngredientEntity(recipeId = 3, name = "Przyprawa gyros", amount = "30", unit = IngredientUnit.GRAM, stepNumber = 1),
+    IngredientEntity(recipeId = 3, name = "Jogurt naturalny", amount = "4", unit = IngredientUnit.TABLESPOON, stepNumber = 2),
+    IngredientEntity(recipeId = 3, name = "Majonez", amount = "2", unit = IngredientUnit.TABLESPOON, stepNumber = 2),
+    IngredientEntity(recipeId = 3, name = "Czosnek", amount = "2", unit = IngredientUnit.CLOVES, stepNumber = 2),
+    IngredientEntity(recipeId = 3, name = "Kukurydza konserwowa", amount = "400", unit = IngredientUnit.GRAM, stepNumber = 3),
+    IngredientEntity(recipeId = 3, name = "Ogórek kiszony", amount = "150", unit = IngredientUnit.GRAM, stepNumber = 3),
+    IngredientEntity(recipeId = 3, name = "Pomidorki koktajlowe", amount = "150", unit = IngredientUnit.GRAM, stepNumber = 3),
+    IngredientEntity(recipeId = 3, name = "Papryka", amount = "1", unit = IngredientUnit.PIECE, stepNumber = 3),
+    IngredientEntity(recipeId = 3, name = "Sałata lodowa", amount = "150", unit = IngredientUnit.GRAM, stepNumber = 4),
 
-    // Bigos (4)
-    IngredientEntity(recipeId = 4, name = "Kapusta kiszona", amount = "500", unit = "g"),
-    IngredientEntity(recipeId = 4, name = "Kapusta biała", amount = "300", unit = "g"),
-    IngredientEntity(recipeId = 4, name = "Kiełbasa myśliwska", amount = "200", unit = "g"),
-    IngredientEntity(recipeId = 4, name = "Suszone grzyby", amount = "30", unit = "g"),
-    IngredientEntity(recipeId = 4, name = "Suszone śliwki", amount = "50", unit = "g"),
+    // Cytrusowe boczniaki ze szparagami i chili (4) – Rozkoszny.pl
+    IngredientEntity(recipeId = 4, name = "Szparagi", amount = "500", unit = IngredientUnit.GRAM, stepNumber = 1),
+    IngredientEntity(recipeId = 4, name = "Boczniaki", amount = "250", unit = IngredientUnit.GRAM, stepNumber = 2),
+    IngredientEntity(recipeId = 4, name = "Czosnek", amount = "3", unit = IngredientUnit.CLOVES, stepNumber = 2),
+    IngredientEntity(recipeId = 4, name = "Chili czerwone", amount = "1", unit = IngredientUnit.PIECE, stepNumber = 2),
+    IngredientEntity(recipeId = 4, name = "Sos sojowy", amount = "2", unit = IngredientUnit.TABLESPOON, stepNumber = 3),
+    IngredientEntity(recipeId = 4, name = "Masło", amount = "2", unit = IngredientUnit.TABLESPOON, stepNumber = 3),
+    IngredientEntity(recipeId = 4, name = "Pomarańcza", amount = "1", unit = IngredientUnit.PIECE, stepNumber = 3),
+    IngredientEntity(recipeId = 4, name = "Sezam", amount = "", unit = IngredientUnit.FOR_SPRINKLING, stepNumber = 4),
 
-    // Schabowy (5)
-    IngredientEntity(recipeId = 5, name = "Schab wieprzowy", amount = "400", unit = "g"),
-    IngredientEntity(recipeId = 5, name = "Jajka", amount = "2", unit = "szt."),
-    IngredientEntity(recipeId = 5, name = "Bułka tarta", amount = "100", unit = "g"),
-    IngredientEntity(recipeId = 5, name = "Ziemniaki", amount = "500", unit = "g"),
-    IngredientEntity(recipeId = 5, name = "Olej do smażenia", amount = "", unit = "do smaku"),
+    // Bardzo zielona zupa z cheddarowym krakersem (5) – Rozkoszny.pl
+    IngredientEntity(recipeId = 5, name = "Por", amount = "2", unit = IngredientUnit.PIECE, stepNumber = 1),
+    IngredientEntity(recipeId = 5, name = "Masło", amount = "2", unit = IngredientUnit.TABLESPOON, stepNumber = 1),
+    IngredientEntity(recipeId = 5, name = "Czosnek", amount = "4", unit = IngredientUnit.CLOVES, stepNumber = 2),
+    IngredientEntity(recipeId = 5, name = "Ziemniak", amount = "1", unit = IngredientUnit.PIECE, stepNumber = 2),
+    IngredientEntity(recipeId = 5, name = "Bulion warzywny", amount = "1", unit = IngredientUnit.LITER, stepNumber = 2),
+    IngredientEntity(recipeId = 5, name = "Groszek mrożony", amount = "400", unit = IngredientUnit.GRAM, stepNumber = 2),
+    IngredientEntity(recipeId = 5, name = "Śmietana 30%", amount = "60", unit = IngredientUnit.MILLILITER, stepNumber = 3),
+    IngredientEntity(recipeId = 5, name = "Cheddar dojrzały", amount = "200", unit = IngredientUnit.GRAM, stepNumber = 4),
 
-    // Rosół (6)
-    IngredientEntity(recipeId = 6, name = "Kurczak", amount = "1", unit = "szt."),
-    IngredientEntity(recipeId = 6, name = "Marchewka", amount = "3", unit = "szt."),
-    IngredientEntity(recipeId = 6, name = "Pietruszka", amount = "2", unit = "szt."),
-    IngredientEntity(recipeId = 6, name = "Seler", amount = "1", unit = "szt."),
-    IngredientEntity(recipeId = 6, name = "Makaron", amount = "200", unit = "g"),
+    // Tom yum na skróty (6) – Rozkoszny.pl
+    IngredientEntity(recipeId = 6, name = "Trawa cytrynowa", amount = "4", unit = IngredientUnit.PIECE, stepNumber = 1),
+    IngredientEntity(recipeId = 6, name = "Cebula czerwona", amount = "1", unit = IngredientUnit.PIECE, stepNumber = 2),
+    IngredientEntity(recipeId = 6, name = "Imbir", amount = "1", unit = IngredientUnit.PIECE, stepNumber = 2),
+    IngredientEntity(recipeId = 6, name = "Pasta tom kha", amount = "50", unit = IngredientUnit.GRAM, stepNumber = 3),
+    IngredientEntity(recipeId = 6, name = "Mleko kokosowe", amount = "400", unit = IngredientUnit.MILLILITER, stepNumber = 3),
+    IngredientEntity(recipeId = 6, name = "Sos rybny", amount = "1", unit = IngredientUnit.TABLESPOON, stepNumber = 3),
+    IngredientEntity(recipeId = 6, name = "Pieczarki", amount = "150", unit = IngredientUnit.GRAM, stepNumber = 3),
+    IngredientEntity(recipeId = 6, name = "Krewetki", amount = "220", unit = IngredientUnit.GRAM, stepNumber = 4),
+    IngredientEntity(recipeId = 6, name = "Pomidorki koktajlowe", amount = "150", unit = IngredientUnit.GRAM, stepNumber = 4),
+    IngredientEntity(recipeId = 6, name = "Pak choy", amount = "1", unit = IngredientUnit.PIECE, stepNumber = 4),
 
-    // Sernik (7)
-    IngredientEntity(recipeId = 7, name = "Twaróg", amount = "1", unit = "kg"),
-    IngredientEntity(recipeId = 7, name = "Cukier", amount = "200", unit = "g"),
-    IngredientEntity(recipeId = 7, name = "Jajka", amount = "6", unit = "szt."),
-    IngredientEntity(recipeId = 7, name = "Masło", amount = "100", unit = "g"),
-    IngredientEntity(recipeId = 7, name = "Budyń waniliowy", amount = "1", unit = "opak."),
+    // Barszcz ukraiński z botwinką (7) – AniaGotuje.pl
+    IngredientEntity(recipeId = 7, name = "Ćwiartka z kurczaka", amount = "450", unit = IngredientUnit.GRAM, stepNumber = 1),
+    IngredientEntity(recipeId = 7, name = "Włoszczyzna", amount = "1", unit = IngredientUnit.PACKAGE, stepNumber = 1),
+    IngredientEntity(recipeId = 7, name = "Botwinka z burakami", amount = "500", unit = IngredientUnit.GRAM, stepNumber = 2),
+    IngredientEntity(recipeId = 7, name = "Ziemniaki", amount = "300", unit = IngredientUnit.GRAM, stepNumber = 2),
+    IngredientEntity(recipeId = 7, name = "Fasolka szparagowa", amount = "250", unit = IngredientUnit.GRAM, stepNumber = 3),
+    IngredientEntity(recipeId = 7, name = "Czosnek", amount = "2", unit = IngredientUnit.CLOVES, stepNumber = 3),
+    IngredientEntity(recipeId = 7, name = "Młoda kapusta", amount = "300", unit = IngredientUnit.GRAM, stepNumber = 4),
+    IngredientEntity(recipeId = 7, name = "Masło", amount = "20", unit = IngredientUnit.GRAM, stepNumber = 4),
+    IngredientEntity(recipeId = 7, name = "Sok z cytryny", amount = "3", unit = IngredientUnit.TABLESPOON, stepNumber = 5),
 
-    // Gołąbki (8)
-    IngredientEntity(recipeId = 8, name = "Kapusta włoska", amount = "1", unit = "szt."),
-    IngredientEntity(recipeId = 8, name = "Mięso mielone", amount = "400", unit = "g"),
-    IngredientEntity(recipeId = 8, name = "Ryż", amount = "150", unit = "g"),
-    IngredientEntity(recipeId = 8, name = "Cebula", amount = "1", unit = "szt."),
-    IngredientEntity(recipeId = 8, name = "Sos pomidorowy", amount = "500", unit = "ml"),
+    // Sernik baskijski (8) – Rozkoszny.pl
+    IngredientEntity(recipeId = 8, name = "Herbatniki", amount = "180", unit = IngredientUnit.GRAM, stepNumber = 1),
+    IngredientEntity(recipeId = 8, name = "Masło", amount = "3", unit = IngredientUnit.TABLESPOON, stepNumber = 1),
+    IngredientEntity(recipeId = 8, name = "Serek kremowy", amount = "750", unit = IngredientUnit.GRAM, stepNumber = 2),
+    IngredientEntity(recipeId = 8, name = "Jogurt grecki", amount = "250", unit = IngredientUnit.GRAM, stepNumber = 2),
+    IngredientEntity(recipeId = 8, name = "Cukier", amount = "250", unit = IngredientUnit.GRAM, stepNumber = 2),
+    IngredientEntity(recipeId = 8, name = "Jajka", amount = "6", unit = IngredientUnit.PIECE, stepNumber = 2),
+    IngredientEntity(recipeId = 8, name = "Śmietanka 36%", amount = "400", unit = IngredientUnit.MILLILITER, stepNumber = 3),
+    IngredientEntity(recipeId = 8, name = "Ekstrakt waniliowy", amount = "1", unit = IngredientUnit.TEASPOON, stepNumber = 3),
 
-    // Placki ziemniaczane (9)
-    IngredientEntity(recipeId = 9, name = "Ziemniaki", amount = "1", unit = "kg"),
-    IngredientEntity(recipeId = 9, name = "Cebula", amount = "1", unit = "szt."),
-    IngredientEntity(recipeId = 9, name = "Jajko", amount = "1", unit = "szt."),
-    IngredientEntity(recipeId = 9, name = "Mąka", amount = "2", unit = "łyżki"),
+    // Szarlotka (9) – AniaGotuje.pl
+    IngredientEntity(recipeId = 9, name = "Mąka pszenna", amount = "320", unit = IngredientUnit.GRAM, stepNumber = 1),
+    IngredientEntity(recipeId = 9, name = "Masło", amount = "200", unit = IngredientUnit.GRAM, stepNumber = 1),
+    IngredientEntity(recipeId = 9, name = "Jajko", amount = "1", unit = IngredientUnit.PIECE, stepNumber = 1),
+    IngredientEntity(recipeId = 9, name = "Cukier", amount = "80", unit = IngredientUnit.GRAM, stepNumber = 1),
+    IngredientEntity(recipeId = 9, name = "Proszek do pieczenia", amount = "2", unit = IngredientUnit.TEASPOONS, stepNumber = 1),
+    IngredientEntity(recipeId = 9, name = "Jabłka", amount = "1.5", unit = IngredientUnit.KILOGRAM, stepNumber = 2),
+    IngredientEntity(recipeId = 9, name = "Cynamon", amount = "1", unit = IngredientUnit.TEASPOON, stepNumber = 2),
 
-    // Kotlet mielony (10)
-    IngredientEntity(recipeId = 10, name = "Mięso mielone", amount = "500", unit = "g"),
-    IngredientEntity(recipeId = 10, name = "Bułka", amount = "1", unit = "szt."),
-    IngredientEntity(recipeId = 10, name = "Jajko", amount = "1", unit = "szt."),
-    IngredientEntity(recipeId = 10, name = "Cebula", amount = "1", unit = "szt."),
-    IngredientEntity(recipeId = 10, name = "Bułka tarta", amount = "50", unit = "g"),
+    // Racuchy z jabłkami (10) – AniaGotuje.pl
+    IngredientEntity(recipeId = 10, name = "Jajka", amount = "2", unit = IngredientUnit.PIECE, stepNumber = 1),
+    IngredientEntity(recipeId = 10, name = "Mleko", amount = "250", unit = IngredientUnit.MILLILITER, stepNumber = 1),
+    IngredientEntity(recipeId = 10, name = "Mąka pszenna", amount = "250", unit = IngredientUnit.GRAM, stepNumber = 2),
+    IngredientEntity(recipeId = 10, name = "Proszek do pieczenia", amount = "½", unit = IngredientUnit.TEASPOONS, stepNumber = 2),
+    IngredientEntity(recipeId = 10, name = "Jabłka", amount = "2", unit = IngredientUnit.PIECE, stepNumber = 3),
+    IngredientEntity(recipeId = 10, name = "Olej do smażenia", amount = "4", unit = IngredientUnit.TABLESPOON, stepNumber = 4),
+    IngredientEntity(recipeId = 10, name = "Cukier puder", amount = "", unit = IngredientUnit.FOR_SPRINKLING, stepNumber = 5),
+
+    // Fasolka po bretońsku (11) – AniaGotuje.pl
+    IngredientEntity(recipeId = 11, name = "Fasola Piękny Jaś", amount = "500", unit = IngredientUnit.GRAM, stepNumber = 1),
+    IngredientEntity(recipeId = 11, name = "Boczek wędzony", amount = "300", unit = IngredientUnit.GRAM, stepNumber = 2),
+    IngredientEntity(recipeId = 11, name = "Kiełbasa", amount = "400", unit = IngredientUnit.GRAM, stepNumber = 2),
+    IngredientEntity(recipeId = 11, name = "Cebula", amount = "1", unit = IngredientUnit.PIECE, stepNumber = 3),
+    IngredientEntity(recipeId = 11, name = "Czosnek", amount = "5", unit = IngredientUnit.CLOVES, stepNumber = 3),
+    IngredientEntity(recipeId = 11, name = "Pomidory", amount = "1500", unit = IngredientUnit.GRAM, stepNumber = 4),
+    IngredientEntity(recipeId = 11, name = "Koncentrat pomidorowy", amount = "40", unit = IngredientUnit.GRAM, stepNumber = 4),
+    IngredientEntity(recipeId = 11, name = "Majeranek", amount = "1", unit = IngredientUnit.TABLESPOON, stepNumber = 4),
 )
 
 private val seedSteps = listOf(
-    // Spaghetti Carbonara (1)
-    StepEntity(recipeId = 1, stepNumber = 1, description = "Ugotuj makaron al dente według instrukcji na opakowaniu."),
-    StepEntity(recipeId = 1, stepNumber = 2, description = "Pokrój boczek w kostkę i podsmaż na suchej patelni do chrupkości."),
-    StepEntity(recipeId = 1, stepNumber = 3, description = "Wymieszaj żółtka z tartym parmezanem i pieprzem."),
-    StepEntity(recipeId = 1, stepNumber = 4, description = "Odcedź makaron, dodaj do boczku, zdejmij z ognia i wlej sos jajeczny mieszając."),
+    // Makaron Primavera z jogurtem greckim (1) – Rozkoszny.pl
+    StepEntity(recipeId = 1, stepNumber = 1, description = "Ugotuj {spaghetti} al dente w osolonej wodzie. Zachowaj ½ szklanki wody z gotowania."),
+    StepEntity(recipeId = 1, stepNumber = 2, description = "Odłam zdrewniałe końce {szparagi zielone} i pokrój na kawałki po 2 cm."),
+    StepEntity(recipeId = 1, stepNumber = 3, description = "Rozgrzej {masło} na patelni. Podsmaż {dymka} z {groszek cukrowy} i szparagami przez 2-3 minuty."),
+    StepEntity(recipeId = 1, stepNumber = 4, description = "Dodaj wyciśnięty {czosnek}, zdejmij z ognia. Wmieszaj makaron, {jogurt grecki}, {parmezan} i {skórka z cytryny}. Dolewaj wodę z gotowania do uzyskania kremowej konsystencji."),
 
-    // Żurek (2)
-    StepEntity(recipeId = 2, stepNumber = 1, description = "Ugotuj białą kiełbasę w wodzie przez 30 minut.", timerSeconds = 1800),
-    StepEntity(recipeId = 2, stepNumber = 2, description = "Ugotuj jajka na twardo (10 minut).", timerSeconds = 600),
-    StepEntity(recipeId = 2, stepNumber = 3, description = "Podgrzej bulion, dodaj zakwas i majeranek."),
-    StepEntity(recipeId = 2, stepNumber = 4, description = "Pokrój kiełbasę i jajka, dodaj do zupy. Podawaj gorące."),
+    // Makaron ze szparagami (2) – AniaGotuje.pl
+    StepEntity(recipeId = 2, stepNumber = 1, description = "Ugotuj {makaron pappardelle} al dente w osolonej wodzie. Zachowaj pół szklanki wody z gotowania."),
+    StepEntity(recipeId = 2, stepNumber = 2, description = "Opłucz {szparagi zielone}, odłam zdrewniałe końce i pokrój na kawałki."),
+    StepEntity(recipeId = 2, stepNumber = 3, description = "Pokrój {boczek wędzony} w kostkę i smaż na suchej patelni aż puści tłuszcz. Dodaj szparagi i smaż razem 15 minut.", timerSeconds = 900),
+    StepEntity(recipeId = 2, stepNumber = 4, description = "Dodaj wyciśnięty {czosnek}, sól, pieprz i gałkę muszkatołową. Wlej {śmietanka 30%} i wodę z gotowania, dodaj {parmezan}. Wymieszaj z makaronem."),
 
-    // Pierogi Ruskie (3)
-    StepEntity(recipeId = 3, stepNumber = 1, description = "Zagnieć ciasto z mąki, wody i szczypty soli. Odstaw na 30 min.", timerSeconds = 1800),
-    StepEntity(recipeId = 3, stepNumber = 2, description = "Ugotuj ziemniaki, odcedź i rozgnieć. Wymieszaj z twarogiem."),
-    StepEntity(recipeId = 3, stepNumber = 3, description = "Podsmaż pokrojoną cebulę na maśle, dodaj do farszu."),
-    StepEntity(recipeId = 3, stepNumber = 4, description = "Rozwałkuj ciasto, wycinaj kółka, nakładaj farsz i zlepiaj pierogi."),
-    StepEntity(recipeId = 3, stepNumber = 5, description = "Gotuj pierogi w osolonej wodzie aż wypłyną na powierzchnię."),
+    // Sałatka Gyros (3) – AniaGotuje.pl
+    StepEntity(recipeId = 3, stepNumber = 1, description = "Pokrój {pierś z kurczaka} w kawałki, obtocz w {przyprawa gyros}. Smaż na patelni przez 10 minut. Ostudź.", timerSeconds = 600),
+    StepEntity(recipeId = 3, stepNumber = 2, description = "Przygotuj sos: wymieszaj {jogurt naturalny}, {majonez}, wyciśnięty {czosnek} i sok z cytryny."),
+    StepEntity(recipeId = 3, stepNumber = 3, description = "Na dno naczynia ułóż kurczaka. Nakładaj warstwy: {ogórek kiszony}, {kukurydza konserwowa}, {pomidorki koktajlowe} i pokrojoną {papryka}."),
+    StepEntity(recipeId = 3, stepNumber = 4, description = "Polej sosem czosnkowym i przykryj posiekaną {sałata lodowa}."),
 
-    // Bigos (4)
-    StepEntity(recipeId = 4, stepNumber = 1, description = "Namocz suszone grzyby w ciepłej wodzie na 30 minut.", timerSeconds = 1800),
-    StepEntity(recipeId = 4, stepNumber = 2, description = "Pokrój kapustę białą w paseczki, podsmaż na oleju."),
-    StepEntity(recipeId = 4, stepNumber = 3, description = "Połącz kapustę kiszoną z białą w dużym garnku, dodaj pokrojoną kiełbasę."),
-    StepEntity(recipeId = 4, stepNumber = 4, description = "Dodaj grzyby i śliwki. Duś na małym ogniu przez 1.5 godziny.", timerSeconds = 5400),
+    // Cytrusowe boczniaki ze szparagami i chili (4) – Rozkoszny.pl
+    StepEntity(recipeId = 4, stepNumber = 1, description = "Odłam zdrewniałe końce {szparagi} i pokrój na kawałki po 2 cm."),
+    StepEntity(recipeId = 4, stepNumber = 2, description = "Rozgrzej olej na dużym ogniu. Smaż {boczniaki} przez 4 minuty. Dodaj {czosnek} i {chili czerwone}, potem szparagi.", timerSeconds = 240),
+    StepEntity(recipeId = 4, stepNumber = 3, description = "Wlej {sos sojowy} z odrobiną wody i {masło}. Mieszaj aż masło się wchłonie. Skrop sokiem z {pomarańcza}."),
+    StepEntity(recipeId = 4, stepNumber = 4, description = "Podawaj posypane {sezam} i kolendrą. Pasuje do ryżu jaśminowego."),
 
-    // Schabowy (5)
-    StepEntity(recipeId = 5, stepNumber = 1, description = "Rozbij plastry schabu tłuczkiem do mięsa."),
-    StepEntity(recipeId = 5, stepNumber = 2, description = "Przygotuj panierę: mąka, rozkłócone jajka, bułka tarta."),
-    StepEntity(recipeId = 5, stepNumber = 3, description = "Obtocz kotlety w mące, jajku i bułce tartej."),
-    StepEntity(recipeId = 5, stepNumber = 4, description = "Smaż na rozgrzanym oleju po 4 minuty z każdej strony.", timerSeconds = 480),
+    // Bardzo zielona zupa z cheddarowym krakersem (5) – Rozkoszny.pl
+    StepEntity(recipeId = 5, stepNumber = 1, description = "Rozpuść {masło} w garnku. Podsmaż pokrojony {por} na małym ogniu przez 8-10 minut.", timerSeconds = 600),
+    StepEntity(recipeId = 5, stepNumber = 2, description = "Dodaj {czosnek}, smaż minutę. Dodaj pokrojony {ziemniak} i {bulion warzywny}. Gotuj 15 minut, dodaj {groszek mrożony} na 2-3 minuty.", timerSeconds = 900),
+    StepEntity(recipeId = 5, stepNumber = 3, description = "Zblenduj na gładko, dodaj {śmietana 30%} i sok z cytryny. Dopraw solą i pieprzem."),
+    StepEntity(recipeId = 5, stepNumber = 4, description = "Posyp starty {cheddar dojrzały} na suchej patelni, dodaj sezam i chili. Smaż aż brzegi się zrumienią. Podawaj krakersy na zupie."),
 
-    // Rosół (6)
-    StepEntity(recipeId = 6, stepNumber = 1, description = "Włóż kurczaka do zimnej wody, doprowadź do wrzenia, zbierz szumowiny."),
-    StepEntity(recipeId = 6, stepNumber = 2, description = "Dodaj obrane warzywa: marchewkę, pietruszkę, seler."),
-    StepEntity(recipeId = 6, stepNumber = 3, description = "Gotuj na małym ogniu przez 2-3 godziny.", timerSeconds = 7200),
-    StepEntity(recipeId = 6, stepNumber = 4, description = "Przecedź bulion, podawaj z ugotowanym makaronem i marchewką."),
+    // Tom yum na skróty (6) – Rozkoszny.pl
+    StepEntity(recipeId = 6, stepNumber = 1, description = "Rozgnieć {trawa cytrynowa} wałkiem i pokrój na kawałki po 3 cm."),
+    StepEntity(recipeId = 6, stepNumber = 2, description = "Podsmaż pokrojoną {cebula czerwona} z trawą cytrynową i plastrami {imbir} przez 6 minut.", timerSeconds = 360),
+    StepEntity(recipeId = 6, stepNumber = 3, description = "Dodaj {pasta tom kha} i płatki chili. Wlej {mleko kokosowe} z wodą, dodaj {sos rybny} i {pieczarki}. Gotuj 10 minut.", timerSeconds = 600),
+    StepEntity(recipeId = 6, stepNumber = 4, description = "Dodaj {krewetki}, {pomidorki koktajlowe} i {pak choy}. Gotuj 7 minut. Podawaj z makaronem ryżowym i kolendrą.", timerSeconds = 420),
 
-    // Sernik (7)
-    StepEntity(recipeId = 7, stepNumber = 1, description = "Zmiel twaróg trzy razy przez maszynkę lub zblenduj na gładko."),
-    StepEntity(recipeId = 7, stepNumber = 2, description = "Utrzyj masło z cukrem, dodawaj żółtka po jednym, mieszając."),
-    StepEntity(recipeId = 7, stepNumber = 3, description = "Dodaj budyń i twaróg, na koniec delikatnie wmieszaj ubite białka."),
-    StepEntity(recipeId = 7, stepNumber = 4, description = "Piecz w 170°C przez 60 minut. Nie otwieraj piekarnika!", timerSeconds = 3600),
+    // Barszcz ukraiński z botwinką (7) – AniaGotuje.pl
+    StepEntity(recipeId = 7, stepNumber = 1, description = "Włóż {ćwiartka z kurczaka} z {włoszczyzna}, liśćmi laurowymi i zielem angielskim do 1.5l zimnej wody. Gotuj godzinę na małym ogniu.", timerSeconds = 3600),
+    StepEntity(recipeId = 7, stepNumber = 2, description = "Przecedź bulion. Dodaj starte {botwinka z burakami} i pokrojone {ziemniaki}. Gotuj 5-8 minut.", timerSeconds = 480),
+    StepEntity(recipeId = 7, stepNumber = 3, description = "Dodaj wyciśnięty {czosnek} i pokrojoną {fasolka szparagowa}. Gotuj 5-8 minut.", timerSeconds = 480),
+    StepEntity(recipeId = 7, stepNumber = 4, description = "Dodaj poszatkowaną {młoda kapusta} i posiekaną nać botwinki z {masło}. Gotuj 5-8 minut.", timerSeconds = 480),
+    StepEntity(recipeId = 7, stepNumber = 5, description = "Dopraw {sok z cytryny}, solą, pieprzem i koperkiem. Podawaj ze śmietaną i świeżym chlebem."),
 
-    // Gołąbki (8)
-    StepEntity(recipeId = 8, stepNumber = 1, description = "Ugotuj ryż do półmiękkości. Zblanszuj liście kapusty."),
-    StepEntity(recipeId = 8, stepNumber = 2, description = "Wymieszaj mięso mielone z ryżem i posiekaną cebulą."),
-    StepEntity(recipeId = 8, stepNumber = 3, description = "Nakładaj farsz na liście kapusty i zawijaj gołąbki."),
-    StepEntity(recipeId = 8, stepNumber = 4, description = "Ułóż w naczyniu żaroodpornym, zalej sosem pomidorowym."),
-    StepEntity(recipeId = 8, stepNumber = 5, description = "Piecz w 180°C przez 45 minut.", timerSeconds = 2700),
+    // Sernik baskijski (8) – Rozkoszny.pl
+    StepEntity(recipeId = 8, stepNumber = 1, description = "Zmiel {herbatniki} na proszek, wymieszaj z roztopionym {masło}. Wyłóż na dno tortownicy i piecz 6 minut w 200°C.", timerSeconds = 360),
+    StepEntity(recipeId = 8, stepNumber = 2, description = "Wymieszaj {serek kremowy} z {jogurt grecki} i {cukier} na gładką masę. Dodawaj {jajka} po jednym, mieszając."),
+    StepEntity(recipeId = 8, stepNumber = 3, description = "Wlej {śmietanka 36%}, sól i {ekstrakt waniliowy}. Wymieszaj i wlej na schłodzoną bazę."),
+    StepEntity(recipeId = 8, stepNumber = 4, description = "Piecz w 240°C przez 30 minut aż wierzch skarmelizuje, a środek drży. Chłódź w lodówce minimum 8 godzin.", timerSeconds = 1800),
 
-    // Placki ziemniaczane (9)
-    StepEntity(recipeId = 9, stepNumber = 1, description = "Zetrzyj ziemniaki i cebulę na tarce o drobnych oczkach."),
-    StepEntity(recipeId = 9, stepNumber = 2, description = "Odciśnij nadmiar wody, dodaj jajko i mąkę, wymieszaj."),
-    StepEntity(recipeId = 9, stepNumber = 3, description = "Smaż łyżkę masy na rozgrzanym oleju z obu stron na złoty kolor."),
+    // Szarlotka (9) – AniaGotuje.pl
+    StepEntity(recipeId = 9, stepNumber = 1, description = "Wymieszaj {mąka pszenna}, {jajko}, {cukier}, pokrojone {masło} i {proszek do pieczenia}. Zagnieć ciasto i schłódź w lodówce godzinę.", timerSeconds = 3600),
+    StepEntity(recipeId = 9, stepNumber = 2, description = "Obierz {jabłka}, zetrzyj na tarce o grubych oczkach i odciśnij sok. Dodaj {cynamon}."),
+    StepEntity(recipeId = 9, stepNumber = 3, description = "Podziel ciasto na pół. Pierwszą połowę wyłóż na dno formy wyłożonej papierem."),
+    StepEntity(recipeId = 9, stepNumber = 4, description = "Rozłóż jabłka na cieście. Drugą połowę ciasta zetrzyj na tarce na wierzch."),
+    StepEntity(recipeId = 9, stepNumber = 5, description = "Piecz w 180°C przez 70 minut aż się zarumieni. Posyp cukrem pudrem.", timerSeconds = 4200),
 
-    // Kotlet mielony (10)
-    StepEntity(recipeId = 10, stepNumber = 1, description = "Namocz bułkę w mleku, odciśnij i zmiel z mięsem i cebulą."),
-    StepEntity(recipeId = 10, stepNumber = 2, description = "Dodaj jajko, sól i pieprz. Wymieszaj i uformuj kotlety."),
-    StepEntity(recipeId = 10, stepNumber = 3, description = "Obtocz w bułce tartej."),
-    StepEntity(recipeId = 10, stepNumber = 4, description = "Smaż na patelni po 5 minut z każdej strony.", timerSeconds = 600),
+    // Racuchy z jabłkami (10) – AniaGotuje.pl
+    StepEntity(recipeId = 10, stepNumber = 1, description = "Rozbij {jajka} do miski, dodaj ciepłe {mleko} i wymieszaj trzepaczką."),
+    StepEntity(recipeId = 10, stepNumber = 2, description = "Dodaj {mąka pszenna} przesianą z {proszek do pieczenia}. Wymieszaj na gładkie ciasto."),
+    StepEntity(recipeId = 10, stepNumber = 3, description = "Obierz {jabłka} i zetrzyj na tarce o grubych oczkach. Wmieszaj do ciasta."),
+    StepEntity(recipeId = 10, stepNumber = 4, description = "Smaż porcje ciasta na rozgrzanym {olej do smażenia} po 1.5-2 minuty z każdej strony na złoty kolor.", timerSeconds = 240),
+    StepEntity(recipeId = 10, stepNumber = 5, description = "Gotowe racuchy posyp {cukier puder}. Podawaj ciepłe."),
+
+    // Fasolka po bretońsku (11) – AniaGotuje.pl
+    StepEntity(recipeId = 11, stepNumber = 1, description = "Namocz {fasola Piękny Jaś} na noc w zimnej wodzie. Opłucz, gotuj z liśćmi laurowymi w 1l wody ok. 90 minut aż zmiękną.", timerSeconds = 5400),
+    StepEntity(recipeId = 11, stepNumber = 2, description = "Pokrój {boczek wędzony} w kostkę i smaż na suchej patelni aż puści tłuszcz. Dodaj pokrojoną {kiełbasa}."),
+    StepEntity(recipeId = 11, stepNumber = 3, description = "Dodaj posiekaną {cebula} i pokrojony {czosnek}. Smaż razem 10 minut.", timerSeconds = 600),
+    StepEntity(recipeId = 11, stepNumber = 4, description = "Dodaj pokrojone {pomidory} z {koncentrat pomidorowy}, {majeranek}, paprykę wędzoną i pieprz. Przełóż do garnka z fasolą i gotuj 15 minut.", timerSeconds = 900),
 )
