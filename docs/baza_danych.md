@@ -1,38 +1,97 @@
-1. `recipes`:
+# Schemat bazy danych
+
+```mermaid
+erDiagram
+    categories {
+        int id PK
+        string name
+        string imageUri
+    }
+
+    recipes {
+        int id PK
+        string name
+        int servings
+        float rating
+        string authorName
+        int time
+        string imageUri
+        int category_id FK
+    }
+
+    ingredients {
+        int id PK
+        int recipeId FK
+        string name
+        string amount
+        string unit
+    }
+
+    steps {
+        int id PK
+        int recipeId FK
+        int stepNumber
+        string description
+        int timerSeconds
+        string imageUri
+    }
+
+    favorites {
+        int id PK
+        int recipeId FK
+        datetime addedAt
+    }
+
+    cooking_history {
+        int id PK
+        int recipeId FK
+        datetime cookedAt
+    }
+
+    categories ||--o{ recipes : "has"
+    recipes ||--o{ ingredients : "has"
+    recipes ||--o{ steps : "has"
+    recipes ||--|| favorites : "favorited by"
+    recipes ||--o{ cooking_history : "cooked in"
+```
+
+1. `categories`:
 
 - `id` - pk
 - `name`
-- `imageResName`
-- `timeMinutes`
+- `imageUri`
+
+2. `recipes`:
+
+- `id` - pk
+- `name`
 - `servings`
 - `rating`
-- `category`
 - `authorName`
-- `likes`
-- `tags`
-- `isUserRecipe`
+- `time`
+- `imageUri`
+- `category_id`
 
-2. `ingredients`:
+3. `ingredients`:
 
 - `id` - pk
 - `recipeId` - fk → `recipes`
 - `name`
 - `amount`
+- `unit`
 
-Rola: Składniki (1:N do `recipes`)
-
-3. `steps`:
+4. `steps`:
 
 - `id` - pk
 - `recipeId` - fk → `recipes`
 - `stepNumber`
 - `description`
 - `timerSeconds?`
-- `imageResName?`
+- `imageUri?`
 
 Rola: Kroki przygotowania (1:N)
 
-4. `favorites`:
+5. `favorites`:
 
 - `id` - pk
 - `recipeId` - fk unique → `recipes`
@@ -40,7 +99,7 @@ Rola: Kroki przygotowania (1:N)
 
 Rola: Polubione (1:1 do `recipes`)
 
-5. `cooking_history`:
+6. `cooking_history`:
 
 - `id` - pk
 - `recipeId` - fk → `recipes`
