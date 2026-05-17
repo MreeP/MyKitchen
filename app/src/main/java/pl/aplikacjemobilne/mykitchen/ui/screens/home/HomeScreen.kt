@@ -1,6 +1,15 @@
 package pl.aplikacjemobilne.mykitchen.ui.screens.home
 
+import android.net.Uri
+import android.widget.VideoView
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,6 +17,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,16 +37,26 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.delay
+import pl.aplikacjemobilne.mykitchen.R
 import pl.aplikacjemobilne.mykitchen.ui.components.NamedSection
 import pl.aplikacjemobilne.mykitchen.ui.components.RecipeCard
 
@@ -86,13 +106,51 @@ fun HomeScreen(
                     fontSize = 14.sp,
                     letterSpacing = 1.5.sp
                 )
-                Text(
-                    text = "Co dziś ugotujemy?",
-                    color = Color(0xFFF5F0EB),
-                    fontSize = 32.sp,
-                    fontFamily = FontFamily.Serif,
-                    lineHeight = 46.sp
-                )
+
+                if (uiState.categories.isNotEmpty()) {
+                    val shuffledCategories = remember(uiState.categories) {
+                        uiState.categories.shuffled()
+                    }
+
+                    var currentIndex by remember { mutableIntStateOf(0) }
+
+                    val currentCategory = shuffledCategories[currentIndex]
+
+                    LaunchedEffect(shuffledCategories.size) {
+                        while (true) {
+                            delay(3000)
+                            currentIndex = (currentIndex + 1) % shuffledCategories.size
+                        }
+                    }
+
+                    Row {
+                        Text(
+                            text = "Masz ochotę na ",
+                            color = Color(0xFFF5F0EB),
+                            fontSize = 24.sp,
+                            fontFamily = FontFamily.Serif,
+                        )
+                        AnimatedContent(
+                            targetState = currentCategory,
+                            transitionSpec = {
+                                (slideInVertically { it } + fadeIn())
+                                    .togetherWith(slideOutVertically { -it } + fadeOut())
+                            },
+                            label = "category-animation"
+                        ) { category ->
+                            Text(
+                                text = "${category.name}?",
+                                color = Color(0xFFF5F0EB),
+                                fontSize = 24.sp,
+                                fontFamily = FontFamily.Serif,
+                                textDecoration = TextDecoration.Underline,
+                                modifier = Modifier.clickable {
+                                    onNavigateToCategory(category.name)
+                                }
+                            )
+                        }
+                    }
+                }
             }
         }
 
