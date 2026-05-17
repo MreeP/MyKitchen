@@ -8,20 +8,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import pl.aplikacjemobilne.mykitchen.MyKitchenApp
+import pl.aplikacjemobilne.mykitchen.data.local.entity.CategoryEntity
 import pl.aplikacjemobilne.mykitchen.data.local.entity.RecipeEntity
 
-data class Category(val name: String, val emoji: String)
-
 data class HomeUiState(
-    val recommendedRecipes: List<RecipeEntity> = emptyList<RecipeEntity>(),
-
-    val categories: List<Category> = listOf(
-        Category("Makarony", "🍝"),
-        Category("Sałatki", "🥗"),
-        Category("Zupy", "🍲"),
-        Category("Desery", "🍰"),
-        Category("Polska", "🇵🇱"),
-    ),
+    val recommendedRecipes: List<RecipeEntity> = emptyList(),
+    val categories: List<CategoryEntity> = emptyList(),
 )
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
@@ -35,6 +27,12 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             repository.getRecommendedRecipes(5).collect { recipes ->
                 _uiState.value = _uiState.value.copy(recommendedRecipes = recipes)
+            }
+        }
+
+        viewModelScope.launch {
+            repository.getCategories().collect { categories ->
+                _uiState.value = _uiState.value.copy(categories = categories)
             }
         }
     }

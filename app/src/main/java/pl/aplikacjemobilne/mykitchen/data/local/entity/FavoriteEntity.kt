@@ -6,27 +6,22 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "recipes",
+    tableName = "favorites",
     foreignKeys = [
         ForeignKey(
-            entity = CategoryEntity::class,
+            entity = RecipeEntity::class,
             parentColumns = ["id"],
-            childColumns = ["categoryId"],
+            childColumns = ["recipeId"],
             onDelete = ForeignKey.CASCADE,
         )
     ],
     indices = [
-        Index("categoryId")
+        Index(value = ["recipeId"], unique = true)
     ],
 )
-data class RecipeEntity(
+data class FavoriteEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    val categoryId: Long,
-    val name: String,
-    val servings: Int,
-    val rating: Float,
-    val authorName: String,
-    val time: Int,
-    val imageUri: String,
+    val recipeId: Long,
+    val addedAt: Long,
 )

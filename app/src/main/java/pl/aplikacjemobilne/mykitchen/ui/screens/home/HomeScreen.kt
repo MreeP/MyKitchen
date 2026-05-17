@@ -44,6 +44,7 @@ import pl.aplikacjemobilne.mykitchen.ui.components.RecipeCard
 fun HomeScreen(
     onNavigateToSearch: () -> Unit,
     onNavigateToCategory: (String) -> Unit,
+    onNavigateToRecipe: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = viewModel()
 ) {
@@ -142,7 +143,7 @@ fun HomeScreen(
                         },
                         leadingIcon = {
                             Text(
-                                text = category.emoji,
+                                text = category.imageUri,
                                 fontSize = 18.sp,
                             )
                         },
@@ -168,7 +169,7 @@ fun HomeScreen(
                 uiState.recommendedRecipes.forEach { recipe ->
                     RecipeCard(
                         recipe = recipe,
-                        onClick = { onNavigateToCategory(recipe.name) },
+                        onClick = { onNavigateToRecipe(recipe.id) },
                     )
                 }
             }

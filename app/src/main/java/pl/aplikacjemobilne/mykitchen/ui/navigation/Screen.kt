@@ -12,6 +12,10 @@ open class Screen(val route: String) {
         fun routeFor(name: String): String = "category/${Uri.encode(name)}"
     }
 
+    data object RecipeDetail : Screen(route = "recipe/{$ARG_RECIPE_ID}") {
+        fun routeFor(recipeId: Long): String = "recipe/$recipeId"
+    }
+
     data object HomeGraph : Screen(route = "home_graph")
     data object SearchGraph : Screen(route = "search_graph")
     data object FavoritesGraph : Screen(route = "favorites_graph")
@@ -19,5 +23,6 @@ open class Screen(val route: String) {
 
     companion object {
         const val ARG_NAME: String = "name"
+        const val ARG_RECIPE_ID: String = "recipeId"
     }
 }

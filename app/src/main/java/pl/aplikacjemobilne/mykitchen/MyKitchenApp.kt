@@ -3,8 +3,6 @@ package pl.aplikacjemobilne.mykitchen
 import android.app.Application
 import pl.aplikacjemobilne.mykitchen.data.local.database.AppDatabase
 import pl.aplikacjemobilne.mykitchen.data.repository.RecipeRepository
-import kotlin.getValue
-
 
 class MyKitchenApp : Application() {
     val database by lazy {
@@ -12,6 +10,12 @@ class MyKitchenApp : Application() {
     }
 
     val repository by lazy {
-        RecipeRepository(database.recipeDao())
+        RecipeRepository(
+            recipeDao = database.recipeDao(),
+            categoryDao = database.categoryDao(),
+            ingredientDao = database.ingredientDao(),
+            stepDao = database.stepDao(),
+            favoriteDao = database.favoriteDao(),
+        )
     }
 }
