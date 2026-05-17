@@ -40,6 +40,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -59,6 +60,7 @@ import kotlinx.coroutines.delay
 import pl.aplikacjemobilne.mykitchen.R
 import pl.aplikacjemobilne.mykitchen.ui.components.NamedSection
 import pl.aplikacjemobilne.mykitchen.ui.components.RecipeCard
+import androidx.core.net.toUri
 
 @Composable
 fun HomeScreen(
@@ -230,6 +232,44 @@ fun HomeScreen(
                         onClick = { onNavigateToRecipe(recipe.id) },
                     )
                 }
+            }
+        }
+
+        NamedSection(title = "Ciekawostki", textModifier = Modifier.padding(start = 20.dp)) {
+            val context = LocalContext.current
+            var isPlaying by remember { mutableStateOf(false) }
+            val videoUri = remember { "android.resource://${context.packageName}/${R.raw.bitasmietana}".toUri() }
+
+            Surface(
+                shape = RoundedCornerShape(16.dp),
+                shadowElevation = 4.dp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+            ) {
+                AndroidView(
+                    factory = { ctx ->
+                        VideoView(ctx).apply {
+                            setVideoURI(videoUri)
+                            setOnPreparedListener { mp ->
+                                mp.isLooping = true
+                            }
+                            setOnClickListener {
+                                if (isPlaying) {
+                                    pause()
+                                } else {
+                                    start()
+                                }
+
+                                isPlaying = !isPlaying
+                            }
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(16f / 9f)
+                        .clip(RoundedCornerShape(16.dp))
+                )
             }
         }
 
