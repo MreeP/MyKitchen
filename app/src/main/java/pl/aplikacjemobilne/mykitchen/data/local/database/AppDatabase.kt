@@ -104,7 +104,7 @@ private val seedCategories = listOf(
     CategoryEntity(id = 2, name = "Sałatki", imageUri = "🥗"),
     CategoryEntity(id = 3, name = "Zupy", imageUri = "🍲"),
     CategoryEntity(id = 4, name = "Desery", imageUri = "🍰"),
-    CategoryEntity(id = 5, name = "Polska", imageUri = "🇵🇱"),
+    CategoryEntity(id = 5, name = "Polskie", imageUri = "🇵🇱"),
 )
 
 private val seedRecipes = listOf(
