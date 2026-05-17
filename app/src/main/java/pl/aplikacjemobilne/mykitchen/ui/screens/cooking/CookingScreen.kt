@@ -19,6 +19,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -26,6 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -42,7 +45,9 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 
@@ -61,6 +66,8 @@ fun CookingScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     var showLeaveDialog by remember { mutableStateOf(false) }
+
+    BackHandler { showLeaveDialog = true }
 
     LaunchedEffect(recipeId) {
         viewModel.setRecipeId(recipeId)
@@ -195,13 +202,25 @@ fun CookingScreen(
                 Column(
                     modifier = Modifier.padding(24.dp),
                 ) {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(80.dp),
-                    ) {
-                        Text(text = "🍳", fontSize = 48.sp)
+                    if (currentStep.imageUri != null) {
+                        AsyncImage(
+                            model = currentStep.imageUri,
+                            contentDescription = "Krok ${currentStep.stepNumber}",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(180.dp)
+                                .clip(RoundedCornerShape(12.dp)),
+                        )
+                    } else {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(80.dp),
+                        ) {
+                            Text(text = "🍳", fontSize = 48.sp)
+                        }
                     }
 
                     Spacer(Modifier.height(16.dp))
@@ -345,17 +364,20 @@ private fun TimerCard(
                 }
             }
 
-            Button(
+            Surface(
                 onClick = { if (isRunning) onPause() else onStart() },
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = OrangeAccent),
+                shape = CircleShape,
+                color = OrangeAccent,
+                modifier = Modifier.size(48.dp),
             ) {
-                Text(
-                    text = if (isRunning) "⏸ Pauza" else "▶️ Start",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.White,
-                )
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                    Icon(
+                        imageVector = if (isRunning) Icons.Filled.Pause else Icons.Filled.PlayArrow,
+                        contentDescription = if (isRunning) "Pauza" else "Start",
+                        tint = Color.White,
+                        modifier = Modifier.size(28.dp),
+                    )
+                }
             }
         }
     }

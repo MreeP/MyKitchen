@@ -23,6 +23,7 @@ import pl.aplikacjemobilne.mykitchen.data.local.entity.IngredientEntity
 import pl.aplikacjemobilne.mykitchen.data.local.entity.RecipeEntity
 import pl.aplikacjemobilne.mykitchen.data.local.entity.StepEntity
 import pl.aplikacjemobilne.mykitchen.data.model.IngredientUnit
+import pl.aplikacjemobilne.mykitchen.ui.screens.profile.ProfileViewModel
 
 @Database(
     entities = [
@@ -33,7 +34,7 @@ import pl.aplikacjemobilne.mykitchen.data.model.IngredientUnit
         FavoriteEntity::class,
         CookingHistoryEntity::class,
     ],
-    version = 2,
+    version = 1,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -70,8 +71,8 @@ abstract class AppDatabase : RoomDatabase() {
     }
 
     private class SeedCallback : Callback() {
-        override fun onOpen(db: SupportSQLiteDatabase) {
-            super.onOpen(db)
+        override fun onCreate(db: SupportSQLiteDatabase) {
+            super.onCreate(db)
 
             CoroutineScope(Dispatchers.IO).launch {
                 val db = database ?: return@launch
@@ -87,6 +88,8 @@ abstract class AppDatabase : RoomDatabase() {
                 db.recipeDao().insertAll(seedRecipes)
                 db.ingredientDao().insertAll(seedIngredients)
                 db.stepDao().insertAll(seedSteps)
+                db.favoriteDao().insertAll(seedFavorites)
+                db.cookingHistoryDao().insertAll(seedCookingHistory)
             }
         }
     }
@@ -151,7 +154,7 @@ private val seedRecipes = listOf(
         name = "Sernik baskijski",
         servings = 12,
         rating = 4.9f,
-        authorName = "Rozkoszny.pl",
+        authorName = ProfileViewModel.USER_NAME,
         time = 60,
         imageUri = resUri(R.drawable.img_sernik_baskijski),
         categoryId = 4,
@@ -162,7 +165,7 @@ private val seedRecipes = listOf(
         name = "Makaron ze szparagami",
         servings = 4,
         rating = 4.6f,
-        authorName = "AniaGotuje.pl",
+        authorName = ProfileViewModel.USER_NAME,
         time = 40,
         imageUri = resUri(R.drawable.img_makaron_szparagi),
         categoryId = 1,
@@ -192,7 +195,7 @@ private val seedRecipes = listOf(
         name = "Szarlotka",
         servings = 8,
         rating = 4.8f,
-        authorName = "AniaGotuje.pl",
+        authorName = ProfileViewModel.USER_NAME,
         time = 100,
         imageUri = resUri(R.drawable.img_szarlotka),
         categoryId = 4,
@@ -342,15 +345,15 @@ private val seedSteps = listOf(
 
     // Makaron ze szparagami (2) – AniaGotuje.pl
     StepEntity(recipeId = 2, stepNumber = 1, description = "Ugotuj {makaron pappardelle} al dente w osolonej wodzie. Zachowaj pół szklanki wody z gotowania."),
-    StepEntity(recipeId = 2, stepNumber = 2, description = "Opłucz {szparagi zielone}, odłam zdrewniałe końce i pokrój na kawałki."),
-    StepEntity(recipeId = 2, stepNumber = 3, description = "Pokrój {boczek wędzony} w kostkę i smaż na suchej patelni aż puści tłuszcz. Dodaj szparagi i smaż razem 15 minut.", timerSeconds = 900),
-    StepEntity(recipeId = 2, stepNumber = 4, description = "Dodaj wyciśnięty {czosnek}, sól, pieprz i gałkę muszkatołową. Wlej {śmietanka 30%} i wodę z gotowania, dodaj {parmezan}. Wymieszaj z makaronem."),
+    StepEntity(recipeId = 2, stepNumber = 2, description = "Opłucz {szparagi zielone}, odłam zdrewniałe końce i pokrój na kawałki.", imageUri = resUri(R.drawable.img_step_2_2)),
+    StepEntity(recipeId = 2, stepNumber = 3, description = "Pokrój {boczek wędzony} w kostkę i smaż na suchej patelni aż puści tłuszcz. Dodaj szparagi i smaż razem 15 minut.", timerSeconds = 900, imageUri = resUri(R.drawable.img_step_2_3)),
+    StepEntity(recipeId = 2, stepNumber = 4, description = "Dodaj wyciśnięty {czosnek}, sól, pieprz i gałkę muszkatołową. Wlej {śmietanka 30%} i wodę z gotowania, dodaj {parmezan}. Wymieszaj z makaronem.", imageUri = resUri(R.drawable.img_step_2_4)),
 
     // Sałatka Gyros (3) – AniaGotuje.pl
-    StepEntity(recipeId = 3, stepNumber = 1, description = "Pokrój {pierś z kurczaka} w kawałki, obtocz w {przyprawa gyros}. Smaż na patelni przez 10 minut. Ostudź.", timerSeconds = 600),
-    StepEntity(recipeId = 3, stepNumber = 2, description = "Przygotuj sos: wymieszaj {jogurt naturalny}, {majonez}, wyciśnięty {czosnek} i sok z cytryny."),
-    StepEntity(recipeId = 3, stepNumber = 3, description = "Na dno naczynia ułóż kurczaka. Nakładaj warstwy: {ogórek kiszony}, {kukurydza konserwowa}, {pomidorki koktajlowe} i pokrojoną {papryka}."),
-    StepEntity(recipeId = 3, stepNumber = 4, description = "Polej sosem czosnkowym i przykryj posiekaną {sałata lodowa}."),
+    StepEntity(recipeId = 3, stepNumber = 1, description = "Pokrój {pierś z kurczaka} w kawałki, obtocz w {przyprawa gyros}. Smaż na patelni przez 10 minut. Ostudź.", timerSeconds = 600, imageUri = resUri(R.drawable.img_step_3_1)),
+    StepEntity(recipeId = 3, stepNumber = 2, description = "Przygotuj sos: wymieszaj {jogurt naturalny}, {majonez}, wyciśnięty {czosnek} i sok z cytryny.", imageUri = resUri(R.drawable.img_step_3_2)),
+    StepEntity(recipeId = 3, stepNumber = 3, description = "Na dno naczynia ułóż kurczaka. Nakładaj warstwy: {ogórek kiszony}, {kukurydza konserwowa}, {pomidorki koktajlowe} i pokrojoną {papryka}.", imageUri = resUri(R.drawable.img_step_3_3)),
+    StepEntity(recipeId = 3, stepNumber = 4, description = "Polej sosem czosnkowym i przykryj posiekaną {sałata lodowa}.", imageUri = resUri(R.drawable.img_step_3_4)),
 
     // Cytrusowe boczniaki ze szparagami i chili (4) – Rozkoszny.pl
     StepEntity(recipeId = 4, stepNumber = 1, description = "Odłam zdrewniałe końce {szparagi} i pokrój na kawałki po 2 cm."),
@@ -371,10 +374,10 @@ private val seedSteps = listOf(
     StepEntity(recipeId = 6, stepNumber = 4, description = "Dodaj {krewetki}, {pomidorki koktajlowe} i {pak choy}. Gotuj 7 minut. Podawaj z makaronem ryżowym i kolendrą.", timerSeconds = 420),
 
     // Barszcz ukraiński z botwinką (7) – AniaGotuje.pl
-    StepEntity(recipeId = 7, stepNumber = 1, description = "Włóż {ćwiartka z kurczaka} z {włoszczyzna}, liśćmi laurowymi i zielem angielskim do 1.5l zimnej wody. Gotuj godzinę na małym ogniu.", timerSeconds = 3600),
-    StepEntity(recipeId = 7, stepNumber = 2, description = "Przecedź bulion. Dodaj starte {botwinka z burakami} i pokrojone {ziemniaki}. Gotuj 5-8 minut.", timerSeconds = 480),
-    StepEntity(recipeId = 7, stepNumber = 3, description = "Dodaj wyciśnięty {czosnek} i pokrojoną {fasolka szparagowa}. Gotuj 5-8 minut.", timerSeconds = 480),
-    StepEntity(recipeId = 7, stepNumber = 4, description = "Dodaj poszatkowaną {młoda kapusta} i posiekaną nać botwinki z {masło}. Gotuj 5-8 minut.", timerSeconds = 480),
+    StepEntity(recipeId = 7, stepNumber = 1, description = "Włóż {ćwiartka z kurczaka} z {włoszczyzna}, liśćmi laurowymi i zielem angielskim do 1.5l zimnej wody. Gotuj godzinę na małym ogniu.", timerSeconds = 3600, imageUri = resUri(R.drawable.img_step_7_1)),
+    StepEntity(recipeId = 7, stepNumber = 2, description = "Przecedź bulion. Dodaj starte {botwinka z burakami} i pokrojone {ziemniaki}. Gotuj 5-8 minut.", timerSeconds = 480, imageUri = resUri(R.drawable.img_step_7_2)),
+    StepEntity(recipeId = 7, stepNumber = 3, description = "Dodaj wyciśnięty {czosnek} i pokrojoną {fasolka szparagowa}. Gotuj 5-8 minut.", timerSeconds = 480, imageUri = resUri(R.drawable.img_step_7_3)),
+    StepEntity(recipeId = 7, stepNumber = 4, description = "Dodaj poszatkowaną {młoda kapusta} i posiekaną nać botwinki z {masło}. Gotuj 5-8 minut.", timerSeconds = 480, imageUri = resUri(R.drawable.img_step_7_4)),
     StepEntity(recipeId = 7, stepNumber = 5, description = "Dopraw {sok z cytryny}, solą, pieprzem i koperkiem. Podawaj ze śmietaną i świeżym chlebem."),
 
     // Sernik baskijski (8) – Rozkoszny.pl
@@ -384,22 +387,36 @@ private val seedSteps = listOf(
     StepEntity(recipeId = 8, stepNumber = 4, description = "Piecz w 240°C przez 30 minut aż wierzch skarmelizuje, a środek drży. Chłódź w lodówce minimum 8 godzin.", timerSeconds = 1800),
 
     // Szarlotka (9) – AniaGotuje.pl
-    StepEntity(recipeId = 9, stepNumber = 1, description = "Wymieszaj {mąka pszenna}, {jajko}, {cukier}, pokrojone {masło} i {proszek do pieczenia}. Zagnieć ciasto i schłódź w lodówce godzinę.", timerSeconds = 3600),
-    StepEntity(recipeId = 9, stepNumber = 2, description = "Obierz {jabłka}, zetrzyj na tarce o grubych oczkach i odciśnij sok. Dodaj {cynamon}."),
-    StepEntity(recipeId = 9, stepNumber = 3, description = "Podziel ciasto na pół. Pierwszą połowę wyłóż na dno formy wyłożonej papierem."),
-    StepEntity(recipeId = 9, stepNumber = 4, description = "Rozłóż jabłka na cieście. Drugą połowę ciasta zetrzyj na tarce na wierzch."),
-    StepEntity(recipeId = 9, stepNumber = 5, description = "Piecz w 180°C przez 70 minut aż się zarumieni. Posyp cukrem pudrem.", timerSeconds = 4200),
+    StepEntity(recipeId = 9, stepNumber = 1, description = "Wymieszaj {mąka pszenna}, {jajko}, {cukier}, pokrojone {masło} i {proszek do pieczenia}. Zagnieć ciasto i schłódź w lodówce godzinę.", timerSeconds = 3600, imageUri = resUri(R.drawable.img_step_9_1)),
+    StepEntity(recipeId = 9, stepNumber = 2, description = "Obierz {jabłka}, zetrzyj na tarce o grubych oczkach i odciśnij sok. Dodaj {cynamon}.", imageUri = resUri(R.drawable.img_step_9_2)),
+    StepEntity(recipeId = 9, stepNumber = 3, description = "Podziel ciasto na pół. Pierwszą połowę wyłóż na dno formy wyłożonej papierem.", imageUri = resUri(R.drawable.img_step_9_3)),
+    StepEntity(recipeId = 9, stepNumber = 4, description = "Rozłóż jabłka na cieście. Drugą połowę ciasta zetrzyj na tarce na wierzch.", imageUri = resUri(R.drawable.img_step_9_4)),
+    StepEntity(recipeId = 9, stepNumber = 5, description = "Piecz w 180°C przez 70 minut aż się zarumieni. Posyp cukrem pudrem.", timerSeconds = 4200, imageUri = resUri(R.drawable.img_step_9_5)),
 
     // Racuchy z jabłkami (10) – AniaGotuje.pl
-    StepEntity(recipeId = 10, stepNumber = 1, description = "Rozbij {jajka} do miski, dodaj ciepłe {mleko} i wymieszaj trzepaczką."),
-    StepEntity(recipeId = 10, stepNumber = 2, description = "Dodaj {mąka pszenna} przesianą z {proszek do pieczenia}. Wymieszaj na gładkie ciasto."),
-    StepEntity(recipeId = 10, stepNumber = 3, description = "Obierz {jabłka} i zetrzyj na tarce o grubych oczkach. Wmieszaj do ciasta."),
-    StepEntity(recipeId = 10, stepNumber = 4, description = "Smaż porcje ciasta na rozgrzanym {olej do smażenia} po 1.5-2 minuty z każdej strony na złoty kolor.", timerSeconds = 240),
-    StepEntity(recipeId = 10, stepNumber = 5, description = "Gotowe racuchy posyp {cukier puder}. Podawaj ciepłe."),
+    StepEntity(recipeId = 10, stepNumber = 1, description = "Rozbij {jajka} do miski, dodaj ciepłe {mleko} i wymieszaj trzepaczką.", imageUri = resUri(R.drawable.img_step_10_1)),
+    StepEntity(recipeId = 10, stepNumber = 2, description = "Dodaj {mąka pszenna} przesianą z {proszek do pieczenia}. Wymieszaj na gładkie ciasto.", imageUri = resUri(R.drawable.img_step_10_2)),
+    StepEntity(recipeId = 10, stepNumber = 3, description = "Obierz {jabłka} i zetrzyj na tarce o grubych oczkach. Wmieszaj do ciasta.", imageUri = resUri(R.drawable.img_step_10_3)),
+    StepEntity(recipeId = 10, stepNumber = 4, description = "Smaż porcje ciasta na rozgrzanym {olej do smażenia} po 1.5-2 minuty z każdej strony na złoty kolor.", timerSeconds = 240, imageUri = resUri(R.drawable.img_step_10_4)),
+    StepEntity(recipeId = 10, stepNumber = 5, description = "Gotowe racuchy posyp {cukier puder}. Podawaj ciepłe.", imageUri = resUri(R.drawable.img_step_10_5)),
 
     // Fasolka po bretońsku (11) – AniaGotuje.pl
-    StepEntity(recipeId = 11, stepNumber = 1, description = "Namocz {fasola Piękny Jaś} na noc w zimnej wodzie. Opłucz, gotuj z liśćmi laurowymi w 1l wody ok. 90 minut aż zmiękną.", timerSeconds = 5400),
-    StepEntity(recipeId = 11, stepNumber = 2, description = "Pokrój {boczek wędzony} w kostkę i smaż na suchej patelni aż puści tłuszcz. Dodaj pokrojoną {kiełbasa}."),
-    StepEntity(recipeId = 11, stepNumber = 3, description = "Dodaj posiekaną {cebula} i pokrojony {czosnek}. Smaż razem 10 minut.", timerSeconds = 600),
-    StepEntity(recipeId = 11, stepNumber = 4, description = "Dodaj pokrojone {pomidory} z {koncentrat pomidorowy}, {majeranek}, paprykę wędzoną i pieprz. Przełóż do garnka z fasolą i gotuj 15 minut.", timerSeconds = 900),
+    StepEntity(recipeId = 11, stepNumber = 1, description = "Namocz {fasola Piękny Jaś} na noc w zimnej wodzie. Opłucz, gotuj z liśćmi laurowymi w 1l wody ok. 90 minut aż zmiękną.", timerSeconds = 5400, imageUri = resUri(R.drawable.img_step_11_1)),
+    StepEntity(recipeId = 11, stepNumber = 2, description = "Pokrój {boczek wędzony} w kostkę i smaż na suchej patelni aż puści tłuszcz. Dodaj pokrojoną {kiełbasa}.", imageUri = resUri(R.drawable.img_step_11_2)),
+    StepEntity(recipeId = 11, stepNumber = 3, description = "Dodaj posiekaną {cebula} i pokrojony {czosnek}. Smaż razem 10 minut.", timerSeconds = 600, imageUri = resUri(R.drawable.img_step_11_3)),
+    StepEntity(recipeId = 11, stepNumber = 4, description = "Dodaj pokrojone {pomidory} z {koncentrat pomidorowy}, {majeranek}, paprykę wędzoną i pieprz. Przełóż do garnka z fasolą i gotuj 15 minut.", timerSeconds = 900, imageUri = resUri(R.drawable.img_step_11_4)),
+)
+
+private val seedFavorites = listOf(
+    FavoriteEntity(id = 1, recipeId = 8, addedAt = 1715900000000),  // Sernik baskijski (user's)
+    FavoriteEntity(id = 2, recipeId = 1, addedAt = 1715800000000),  // Makaron Primavera
+    FavoriteEntity(id = 3, recipeId = 6, addedAt = 1715700000000),  // Tom yum
+)
+
+private val seedCookingHistory = listOf(
+    CookingHistoryEntity(id = 1, recipeId = 2, cookedAt = 1715900000000),   // Makaron ze szparagami (user's)
+    CookingHistoryEntity(id = 2, recipeId = 8, cookedAt = 1715850000000),   // Sernik baskijski (user's)
+    CookingHistoryEntity(id = 3, recipeId = 9, cookedAt = 1715800000000),   // Szarlotka (user's)
+    CookingHistoryEntity(id = 4, recipeId = 1, cookedAt = 1715750000000),   // Makaron Primavera
+    CookingHistoryEntity(id = 5, recipeId = 11, cookedAt = 1715700000000),  // Fasolka po bretońsku
 )

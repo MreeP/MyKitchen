@@ -130,33 +130,41 @@ fun ProfileScreen(
 
         Spacer(Modifier.height(8.dp))
 
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        Surface(
+            shape = RoundedCornerShape(28.dp),
+            color = Color(0xFFE0D5C8),
             modifier = Modifier
+                .fillMaxWidth()
                 .padding(horizontal = 20.dp),
         ) {
-            ProfileTab.entries.forEach { tab ->
-                val isSelected = uiState.selectedTab == tab
+            Row(
+                modifier = Modifier.padding(4.dp),
+            ) {
+                ProfileTab.entries.forEach { tab ->
+                    val isSelected = uiState.selectedTab == tab
 
-                val label = when (tab) {
-                    ProfileTab.MY_RECIPES -> "Moje przepisy"
-                    ProfileTab.FAVORITES -> "Ulubione"
-                    ProfileTab.HISTORY -> "Historia"
-                }
+                    val label = when (tab) {
+                        ProfileTab.MY_RECIPES -> "Moje"
+                        ProfileTab.FAVORITES -> "Ulubione"
+                        ProfileTab.HISTORY -> "Historia"
+                    }
 
-                Surface(
-                    onClick = { viewModel.selectTab(tab) },
-                    shape = RoundedCornerShape(20.dp),
-                    color = if (isSelected) Color.White else Color.Transparent,
-                    shadowElevation = if (isSelected) 2.dp else 0.dp,
-                ) {
-                    Text(
-                        text = label,
-                        fontSize = 14.sp,
-                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-                        color = if (isSelected) Color(0xFF1A1A1A) else Color(0xFF8A8A8A),
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
-                    )
+                    Surface(
+                        onClick = { viewModel.selectTab(tab) },
+                        shape = RoundedCornerShape(24.dp),
+                        color = if (isSelected) Color.White else Color.Transparent,
+                        shadowElevation = if (isSelected) 2.dp else 0.dp,
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        Text(
+                            text = label,
+                            fontSize = 14.sp,
+                            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+                            color = if (isSelected) Color(0xFF1A1A1A) else Color(0xFF8A7A6A),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 12.dp),
+                        )
+                    }
                 }
             }
         }

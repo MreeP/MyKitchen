@@ -25,6 +25,9 @@ interface CookingHistoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entry: CookingHistoryEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(entries: List<CookingHistoryEntity>)
+
     @Query("DELETE FROM cooking_history")
     suspend fun deleteAll()
 }
