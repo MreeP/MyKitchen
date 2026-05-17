@@ -38,7 +38,8 @@ val bottomNavItems = listOf(
 @Composable
 fun BottomNavBar(
     currentDestination: NavDestination?,
-    onNavigate: (String) -> Unit
+    onNavigate: (String) -> Unit,
+    showLabels: Boolean = false,
 ) {
     NavigationBar(
         containerColor = Color.White
@@ -55,7 +56,11 @@ fun BottomNavBar(
                         contentDescription = item.label
                     )
                 },
-                label = { Text(item.label) },
+                label = {
+                    if (showLabels) {
+                        Text(item.label)
+                    }
+                },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = Color(0xFFD4540A),
                     selectedTextColor = Color(0xFFD4540A),
